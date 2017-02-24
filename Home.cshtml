@@ -1,0 +1,115 @@
+﻿@model McKesson_Denial_Coding.BAL.ViewModels.UserMenuModel
+@{
+    ViewBag.Title = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8" />
+    <title>McKesson Denial Coding | Login Page</title>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    @Styles.Render("~/bundles/HomePageStyles");
+
+    <link rel="shortcut icon" href="favicon.ico" />
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="login">
+    <!-- BEGIN LOGO -->
+    <div class="logo" style="margin-top:15em">
+        @*<img src="~/CustomStyles/images/500_px.png" style="height:70px" />*@
+        <img src="~/CustomStyles/images/CompanyLogo.png" alt="" style="height:70px" />
+        <h3 class="form-title" style="color: #eee;">
+                WELCOME TO DENIAL CODING
+            </h3>
+    </div>
+    <!-- END LOGO -->
+    <!-- BEGIN LOGIN -->
+    <div class="content" style="">
+
+        <!-- BEGIN LOGIN FORM -->
+        @using (Html.BeginForm("LoadClientMenu", "Home", FormMethod.Post, new { @class = "form-vertical login-form", role = "form" }))
+        {
+
+            @*<img src="~/CustomStyles/images/500_px.png" />*@
+            <center>
+                @*<h3 class="form-title">*@
+                <div class="row">
+                    <img src="~/CustomStyles/images/CompanyLogo.png" alt="" />
+                    @*<div class="col-md-4 col-lg-4 col-sm-4"><img src="~/CustomStyles/images/CompanyLogo.png" alt="" style="height:70px" /></div>
+                        <div class="col-md-8 col-lg-8 col-sm-8"><img src="~/CustomStyles/images/500_px.png" style="height:70px" /></div>*@
+                </div>
+                @*<img src="~/CustomStyles/images/250_px.png" />*@
+
+
+                @*<label style=" color: #253c7d; font-size: 23px; margin-bottom: -15px; ">WELCOME TO CBI</label><br />
+                    <label style="color: #a11d21 ; font-size: 13px; ">CODING & BILLING INTERFACE</label>*@
+                @*</h3>*@
+            </center>
+            <h4 class="" style="color:red">@ViewBag.Message</h4>
+            <div class="control-group">
+                <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+                <label class="control-label visible-ie8 visible-ie9">UserName</label>
+                <div class="controls">
+                    <label>Please Select Project</label>
+                    <div class="input-icon left">
+                        <i class="icon-user"></i>
+                        @Html.DropDownListFor(x => x.SelectedProject, new SelectList(@Model.ProjectList, "Value", "Text"), "---Select---", new { @class = "form-control" })
+                        <p style="color: #b94a48;">
+                    </div>
+                </div>
+                <div class="controls">
+                    <label>Please Select Location</label>
+                    <div class="input-icon left">
+                        <i class="icon-user"></i>
+                         @Html.DropDownListFor(x => x.SelectedLocation, new SelectList(@Model.LocationList, "Value", "Text"), "---Select---", new { @class = "form-control" })
+                        <p style="color: #b94a48;">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-actions" style="text-align: center; margin-top: 1em;">
+
+                <button type="submit" class="btn green" onclick="return CheckProject();" value="Register">
+                    GO <i class="m-icon-swapright m-icon-white"></i>
+                </button>
+            </div>
+
+        }
+    </div>
+    @Scripts.Render("~/bundles/HomePageScripts")
+    <script>
+        jQuery(document).ready(function () {
+            Metronic.init(); // init metronic core components
+            Layout.init(); // init current layout
+            QuickSidebar.init(); // init quick sidebar
+            Demo.init(); // init demo features
+            Login.init();
+            // init background slide images
+            $.backstretch([
+             "../../Content/assets/admin/pages/media/bg/1.jpg",
+             "../../Content/assets/admin/pages/media/bg/2.jpg",
+             "../../Content/assets/admin/pages/media/bg/3.jpg",
+             "../../Content/assets/admin/pages/media/bg/4.jpg"
+            ], {
+                fade: 1000,
+                duration: 8000
+            }
+         );
+        });
+    </script>
+    <!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>
