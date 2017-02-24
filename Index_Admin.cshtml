@@ -1,0 +1,245 @@
+﻿@model McKesson_Denial_Coding.BAL.ViewModels.AdminModel
+@using McKesson_Denial_Coding.BAL.Generics
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bootstrap Case</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .image {
+            position: relative;
+            width: 100%; /* for IE 6 */
+        }
+    </style>
+</head>
+<body>
+@using (Html.BeginForm())
+    {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="container">
+        
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#home">Column</a></li>
+           
+            <li><a data-toggle="tab" href="#menu2">Mapping</a></li>
+            
+        </ul>
+
+        <div class="tab-content">
+            <div id="home" class="tab-pane fade in active">
+                <div class="col-md-1 col-sm-1 col-lg-1">
+                    <label>Category</label>
+                </div>
+                <div class="col-md-1 col-sm-1 col-lg-1">
+                    <select id="ddlCategory" onchange="selectDynamiccolumnlist(this)" class="form-control customeSelect">
+                        <option value="Select">Select</option>
+                        <option value="show">SHOW</option>
+                        <option value="add">ADD</option>
+                        <option value="edit">EDIT</option>
+                    </select>
+                </div>
+
+                
+
+
+                <div class="col-md-1 col-sm-1 col-lg-1">
+                    <label>Project</label>
+                </div>
+                <div class="col-md-2 col-sm-2 col-lg-2">
+                    @*<select id="ddlMain" onchange="selectChange(this)" class="form-control customeSelect">
+                        <option value="Select">Select</option>
+                    </select>*@
+                    @Html.DropDownListFor(x => x.SelectedProject, new SelectList(@Model.ProjectList, "Value", "Text"), "-- Select --", new { @class = "form-control", @id = "ddlProject" })
+
+                </div>
+                <div class="col-md-1 col-sm-1 col-lg-1">
+                    <label>Practice</label>
+                </div>
+                <div class="col-md-2 col-sm-2 col-lg-2">
+                    @*<select id="ddlSub" class="form-control customeSelect" onchange="selectsubmenuChange(this)">
+                        <option value="Select">Select</option>
+                    </select>*@
+                    @Html.DropDownListFor(x => x.SelectedPractice, new SelectList(@Model.PracticeList, "Value", "Text"), "-- Select --", new { @class = "form-control", @id = "ddlPractice" })
+
+                </div>
+                <div class="col-md-2 col-sm-2 col-lg-2">
+                    <div class="col-md-3 col-sm-3 col-lg-3">
+                        <input type="button" class="btn btn-primary" value="Save" id="btnDynamicSave" onclick="SaveChanges();" />
+                    </div>
+                    <div class="col-md-3 col-sm-3 col-lg-3">
+                        <input type="button" class="btn btn-primary" value="Clear" id="btnDynamicClear" onclick="Clear();" />
+
+                    </div>
+                </div>      
+                <div class="x_content" id="columnGridBind" style="overflow-x:scroll">
+
+                </div>         
+                <div class="x_content" id="columnAdd" style="overflow-x:scroll">
+                    <table>
+                        <tr>
+                            <td>
+                                @Html.LabelFor(model => model.ColumnName, new { @class = "control-label col-md-2", @id = "txtcname" })
+                            </td>
+                            <td class="col-md-10">
+                                @Html.EditorFor(model => model.ColumnName)
+                                @Html.ValidationMessageFor(model => model.ColumnName)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.LabelFor(model => model.Display_Name, new { @class = "control-label col-md-2", @id = "txtcdisplay" })
+                            </td>
+                            <td class="col-md-10">
+                                @Html.EditorFor(model => model.Display_Name)
+                                @Html.ValidationMessageFor(model => model.Display_Name)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @*<input type="submit" value="ADD" class="btn btn-primary" />
+                                <input type="button" class="btn btn-primary" value="Save" id="btnDynamicSave" onclick="SaveChanges();" />*@
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                
+
+            </div>
+           
+            <div id="menu2" class="tab-pane fade">
+                <div class="col-md-1 col-sm-1 col-lg-1">
+                    <label>Category</label>
+                </div>
+                <div class="col-md-1 col-sm-1 col-lg-1">
+                    <select id="ddlCategory" onchange="selectDynamicChange(this)" class="form-control customeSelect">
+                        <option value="Select">Select</option>
+                        <option value="Pipeline">SHOW</option>
+                        <option value="InProgress">ADD</option>
+                        <option value="InProgress">EDIT</option>
+                    </select>
+                </div>
+
+                <div class="col-md-1 col-sm-1 col-lg-1">
+                    <label>Project</label>
+                </div>
+                <div class="col-md-2 col-sm-2 col-lg-2">
+                    <select id="ddlMain" onchange="selectChange(this)" class="form-control customeSelect">
+                        <option value="Select">Select</option>
+                    </select>
+                </div>
+                <div class="col-md-1 col-sm-1 col-lg-1">
+                    <label>Practice</label>
+                </div>
+                <div class="col-md-2 col-sm-2 col-lg-2">
+                    <select id="ddlSub" class="form-control customeSelect" onchange="selectsubmenuChange(this)">
+                        <option value="Select">Select</option>
+                    </select>
+                </div>
+                <div class="col-md-2 col-sm-2 col-lg-2">
+                    <div class="col-md-3 col-sm-3 col-lg-3">
+                        <input type="button" class="btn btn-primary" value="Save" id="btnDynamicSave" onclick="SaveChanges();" />
+                    </div>
+                    <div class="col-md-3 col-sm-3 col-lg-3">
+                        <input type="button" class="btn btn-primary" value="Clear" id="btnDynamicClear" onclick="Clear();" />
+
+                    </div>
+                </div>
+
+            </div>
+            
+        </div>
+    </div>
+     }
+
+    @*<div>
+            @Html.ActionLink("Back to List", "Index")
+        </div>*@
+</body>
+</html>
+<script type="text/javascript">
+    var ProjId =@HttpContext.Current.Session[Constants.ProjectId]
+    function selectDynamiccolumnlist(element) {
+        //ClearImg();
+        //alert('hiii');
+        if (element.options[element.selectedIndex].value != 'Select') {
+            if (element.options[element.selectedIndex].value == 'show') {
+
+                $('#columnAdd').css("display", "none");
+                $('#columnGridBind').css("display", "block");                
+                LoadColumnInboxGrid();
+            }
+            else if (element.options[element.selectedIndex].value == 'add') {
+
+                $('#columnAdd').css("display", "block");
+                $('#columnGridBind').css("display", "none");
+            }
+            else if (element.options[element.selectedIndex].value == 'edit') {
+
+                $('#columnAdd').css("display", "block");
+                $('#columnGridBind').css("display", "none");
+            }
+           
+        }
+        else
+        {
+            $('#columnAdd').css("display", "none");
+            $('#columnGridBind').css("display", "none");
+        }
+    }
+    debugger;
+    function LoadColumnInboxGrid() {
+        $.ajax({
+            url: '@Url.Action("LoadColumnInbox")',
+            cache: false,
+            type: 'GET',
+            dataType: 'html',
+            beforeSend: function () {
+            },
+            success: function (data) {
+                $('#columnGridBind').first().html(data);
+            },
+            error: function (jXhr) {
+            }
+        });
+    }
+
+    function SaveChanges() {
+        debugger
+        var PR = $("#ddlPractice option:selected").text();
+        var cname=document.getElementById("txtcname").value;
+        var cdisplay=document.getElementById("txtcdisplay").value;
+
+        if (PR == 'Select') {
+            alert('Please Select Practice');
+        } else {
+            $.ajax({
+                url: '@Url.Action("EditDynamicColumn")',
+                        cache: false,
+                        type: 'GET',
+                        dataType: 'html',
+                        data: { Practice: PR, ColumnName: cname, ColumnDisplay: cdisplay },
+                        beforeSend: function () {
+                        },
+                        success: function (data) {
+
+                            // $('#EApproval').first().html(data);
+
+                        },
+                        error: function (jXhr) {
+                        }
+                    });
+                } 
+            
+        }
+
+    </script>
+

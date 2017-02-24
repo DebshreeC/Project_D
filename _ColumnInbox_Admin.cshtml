@@ -1,0 +1,51 @@
+﻿@model IEnumerable<McKesson_Denial_Coding.DAL.tbl_COLUMN_LIST>
+
+<p>
+    @*@Html.ActionLink("Create New", "Create")*@
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.COLUMN_NAME)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DISPLAY_NAME)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UPDATED_BY)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UPDATED_DATE)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.tbl_PROJECT_MASTER.PROJECT_NAME)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.COLUMN_NAME)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DISPLAY_NAME)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UPDATED_BY)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UPDATED_DATE)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.tbl_PROJECT_MASTER.PROJECT_NAME)
+        </td>
+        <td>
+            @*@Html.ActionLink("Edit", "Edit", new { id=item.COLUMN_ID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.COLUMN_ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.COLUMN_ID })*@
+        </td>
+    </tr>
+}
+
+</table>
