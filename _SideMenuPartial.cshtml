@@ -1,0 +1,14 @@
+﻿
+<div class="menu_section">
+    <h3>General</h3>
+    @{
+        int tabindex = 0;
+    }
+    <ul class="nav side-menu" id="Div" tabindex="@(++tabindex)">
+        @if (Session["UserMenu"] != null)
+        {
+            @Html.Raw(Session["UserMenu"].ToString())
+        }
+    </ul>
+   
+</div>
