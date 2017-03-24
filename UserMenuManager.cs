@@ -1,6 +1,6 @@
-﻿using McKesson_Denial_Coding.BAL.Generics;
-using McKesson_Denial_Coding.BAL.ViewModels;
-using McKesson_Denial_Coding.DAL;
+﻿using Denial_Coding.BAL.Generics;
+using Denial_Coding.BAL.ViewModels;
+using DC.DAL;
 
 using Microsoft.Win32.SafeHandles;
 using System;
@@ -18,54 +18,12 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Data.Entity;
+using System.Data.Entity.SqlServer;
 
-
-
-namespace McKesson_Denial_Coding.BAL.Managers
+namespace Denial_Coding.BAL.Managers
 {
     public class UserMenuManager : IUserMenuService
     {
-
-
-        #region Get Project Names
-        public UserMenuModel GetProject_LocationList()
-        {
-            try
-            { 
-            using (McKesson_GVLEntities _context = new McKesson_GVLEntities())
-            {
-                UserMenuModel model = new UserMenuModel();
-                string userName = System.Environment.UserName.ToString();
-
-                model.ProjectList = (from project in _context.tbl_PROJECT_MASTER
-                                     join user in _context.tbl_USER_ACCESS on project.PROJECT_ID equals user.PROJECT_ID
-                                     where user.USER_NTLG == userName
-                                     select new SelectListItem
-                                      {
-                                          Text = project.PROJECT_NAME,
-                                          Value = project.PROJECT_NAME
-                                      }).ToList();
-
-
-                model.LocationList = (from location in _context.tbl_LOCATION
-                                      join project in _context.tbl_PROJECT_MASTER on location.PROJECT_ID equals project.PROJECT_ID
-                                      join user in _context.tbl_USER_ACCESS on location.LOCATION_ID equals user.LOCATION_ID
-                                      where user.USER_NTLG == userName
-                                      select new SelectListItem
-                                      {
-                                          Text = location.LOCATION,
-                                          Value = location.LOCATION
-                                      }).ToList();                
-
-                return model;
-            }
-        }
-        catch(Exception ex)
-            {
-                throw ex;
-        }
-        }
-        #endregion
 
         #region GetUserMenu
         public void GetSideMenu()
@@ -84,7 +42,7 @@ namespace McKesson_Denial_Coding.BAL.Managers
 
 
                 var httpContext = new HttpContextWrapper(System.Web.HttpContext.Current);
-                var menuList = _context.SP_Get_Menu_Details(HttpContext.Current.Session[Constants.UserName].ToString(), HttpContext.Current.Session[Constants.ProjectId].ToString()).ToList();
+                var menuList = _context.USP_Get_Menu_Details(HttpContext.Current.Session[Constants.UserName].ToString(), HttpContext.Current.Session[Constants.ProjectId].ToString()).ToList();
                 var urlHelper = new UrlHelper(new RequestContext(httpContext, new RouteData()));
                 for (int i = 0; i < menuList.Count; i++)
                 {
@@ -126,6 +84,7 @@ namespace McKesson_Denial_Coding.BAL.Managers
 
         }
         #endregion
+
         #region GetFontIcon
 
         public string GetFontIcons(string iconName)
@@ -176,20 +135,20 @@ namespace McKesson_Denial_Coding.BAL.Managers
             }
         }
         #endregion
-
+        
         #region Store SessionDetails
         public void SaveSessionDetails(UserMenuModel model)
         {
             using (McKesson_GVLEntities _context = new McKesson_GVLEntities())
             {
-                string projectname = model.SelectedProject;
+                int projectid = Convert.ToInt32(model.SelectedProject);
+                int locationid = Convert.ToInt32(model.SelectedLocation);
 
-                if (HttpContext.Current.Session[Constants.ProjectId]==null)
+                if (HttpContext.Current.Session[Constants.ProjectId] == null)
                 {
-                    
-                    var project = (from p in _context.tbl_PROJECT_MASTER
-                                   join l in _context.tbl_LOCATION on p.PROJECT_ID equals l.PROJECT_ID
-                                   where p.PROJECT_NAME == projectname
+
+                    var project = (from p in _context.tbl_PROJECT_MASTER                                   
+                                   where p.PROJECT_ID == projectid
                                    select new
                                    {
                                        p.PROJECT_NAME,
@@ -207,10 +166,54 @@ namespace McKesson_Denial_Coding.BAL.Managers
                     HttpContext.Current.Session[Constants.ProjectName] = HttpContext.Current.Session[Constants.ProjectName];
                     HttpContext.Current.Session[Constants.UserName] = System.Environment.UserName.ToString();
                 }
+                if (HttpContext.Current.Session[Constants.LocationId] == null)
+                {
+                    var location = (from l in _context.tbl_LOCATION
+                                   where l.LOCATION_ID == locationid
+                                   select new
+                                   {
+                                       l.LOCATION,
+                                       l.LOCATION_ID
+                                   }).FirstOrDefault();
+
+                    HttpContext.Current.Session[Constants.LocationId] = location.LOCATION_ID;
+                    HttpContext.Current.Session[Constants.LocationName] = location.LOCATION;
+                }
             }
 
         }
-        #endregion
+        #endregion  
+     
+        #region Get Project and Location Names
+        public UserMenuModel GetProject_locationList()
+        {
+            using (McKesson_GVLEntities _context = new McKesson_GVLEntities())
+            {
+                UserMenuModel model = new UserMenuModel();
+                string userName = System.Environment.UserName.ToString();
+                model.ProjectList = (from project in _context.tbl_PROJECT_MASTER
+                                    join user in _context.tbl_USER_ACCESS on project.PROJECT_ID equals user.PROJECT_ID
+                                    where user.USER_NTLG == userName
+                                    select new SelectListItem
+                                    {
+                                        Text = project.PROJECT_NAME,
+                                        Value = SqlFunctions.StringConvert((double)project.PROJECT_ID).Trim()
+                                    }).ToList();
+
+                model.LocationList = (from location in _context.tbl_LOCATION                                      
+                                      join user in _context.tbl_USER_ACCESS on location.LOCATION_ID equals user.LOCATION_ID
+                                      where user.USER_NTLG == userName
+                                      select new SelectListItem
+                                      {
+                                          Text = location.LOCATION,
+                                          Value = SqlFunctions.StringConvert((double)location.LOCATION_ID).Trim()
+                                      }).ToList();   
+
+                return model;
+            }
+        }
+
+        #endregion       
 
     }
 }
