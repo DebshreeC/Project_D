@@ -1,0 +1,69 @@
+﻿@model Denial_Coding.BAL.ViewModels.AdminModel
+@using (Html.BeginForm("", "", FormMethod.Post, new { @id = "formUpdateAccount" }))
+{
+          
+    <div class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-hidden="true" style="display: block; padding-right: 17px; background: rgba(0,0,0,0.3);" id="modaleditColumn">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" tabindex="0" class="close" data-dismiss="modal" onclick="CloseModal()">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Column Details</h4>
+                </div>
+                <div class="modal-body col-md-offset-1 col-sm-offset-1 col-lg-offset-1">
+                    <div class="row" style="margin-top:1em">
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>Column Number</label></div>
+                        <div class="col-md-3 col-sm-3 col-lg-3">@Html.TextBoxFor(x => x.ColumnId, new { @class = "form-control customeSelect", @readonly = "readonly", tabindex = "@(++tabindex)" })</div>
+                        @*@Html.HiddenFor(x => x.TRANS_ID)*@
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>Column Name</label></div>
+                        <div class="col-md-3 col-sm-3 col-lg-3">@Html.TextBoxFor(x => x.ColumnName, new { @class = "form-control customeSelect", @readonly = "readonly", tabindex = "@(++tabindex)" })</div>
+                    </div>
+
+                    <div class="row" style="margin-top:1em">
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>Display Name</label></div>
+                        <div class="col-md-3 col-sm-3 col-lg-3">@Html.TextBoxFor(x => x.Display_Name, new { @class = "form-control customeSelect", tabindex = "@(++tabindex)" })</div>
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>Data Type</label></div>
+                        <div class="col-md-3 col-sm-3 col-lg-3">@Html.TextBoxFor(x => x.DataType, new { @class = "form-control customeSelect", tabindex = "@(++tabindex)" })</div></div>
+
+                    </div>                    
+                </div>
+                <div class="modal-footer" style="text-align:center">                    
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="CloseModal()">Close</button>
+                </div>
+
+            </div>
+        </div>
+}
+<script>
+  
+   function CloseModal()
+    {
+       $('#modaleditColumn').css('display', 'none');
+   }
+
+    $('#formUpdateAccount').on('submit', function (event) {
+        debugger;
+        event.preventDefault();
+        $.ajax({
+            url: '@Url.Action("SaveAndUpdateColumnChanges")',
+            cache: false,
+            type: 'POST',
+            data: $(this).serialize(),
+            dataType: 'JSON',
+            beforeSend: function () {
+            },
+            success: function (data) {
+
+                LoadColumnInboxGrid();
+                CloseModal();
+                SuccessMessage('Data has been updated');
+            },
+            error: function (jXhr) {
+                alert(jXhr);
+            }
+        });
+    });
+</script>

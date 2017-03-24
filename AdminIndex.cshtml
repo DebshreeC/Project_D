@@ -1,0 +1,963 @@
+﻿@model Denial_Coding.BAL.ViewModels.AdminModel
+@using Denial_Coding.BAL.Generics
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bootstrap Case</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .image {
+            position: relative;
+            width: 100%; /* for IE 6 */
+        }
+    </style>
+    <script src="~/CustomStyles/ToasterMessages.js"></script>
+</head>
+<body>  
+    <div class="container">
+
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#home">Column</a></li>
+
+            <li><a data-toggle="tab" href="#menu2">Mapping</a></li>
+            <li><a data-toggle="tab" href="#menu3">Client</a></li>
+            <li><a data-toggle="tab" href="#menu4">Account</a></li>
+            <li><a data-toggle="tab" href="#menu5">Error Catagory</a></li>
+
+        </ul>
+         <div class="tab-content">
+                <div id="home" class="tab-pane fade in active">
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <h2> Filter Data</h2>
+                                <ul class="nav navbar-right panel_toolbox">
+                                    <li style="float:right">
+                                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                    </li>
+
+                                </ul>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content">
+                                <div class="col-md-12 col-sm-12 col-lg-12">
+                                    <div class="col-md-1 col-sm-1 col-lg-1">
+                                        <label>Category</label>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 col-lg-2">
+                                        <select id="ddlcolCategory" onchange="selectDynamiccolumnlist(this)" class="form-control customeSelect">
+                                            <option value="Select">Select</option>
+                                            <option value="show">SHOW</option>
+                                            <option value="add">ADD</option>
+                                            @*<option value="edit">EDIT</option>*@
+                                        </select>
+                                    </div>
+                                    <div class="col-md-1 col-sm-1 col-lg-1">
+                                        <label>Project</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        @*<select id="ddlMain" onchange="selectChange(this)" class="form-control customeSelect">
+                                <option value="Select">Select</option>
+                            </select>*@
+                                        @Html.DropDownListFor(x => x.SelectedProject, new SelectList(@Model.ProjectList, "Value", "Text"), "-- Select --", new { @class = "form-control", @onchange = "LoadColumnInboxGrid()" })
+
+                                    </div>
+                                    <div class="col-md-1 col-sm-1 col-lg-1">
+                                        <label>Practice</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        @*<select id="ddlSub" class="form-control customeSelect" onchange="selectsubmenuChange(this)">
+                                <option value="Select">Select</option>
+                            </select>*@
+                                        @Html.DropDownListFor(x => x.SelectedPractice, new SelectList(@Model.PracticeList, "Value", "Text"), "-- Select --", new { @class = "form-control", @id = "ddlPractice", @onchange = "LoadColumnInboxGrid()" })
+
+                                    </div>
+                                    <div class="col-md-1 col-sm-1 col-lg-1">
+                                    </div>
+                                </div>
+                                <br />
+                                <br />
+                                <br />
+                                <div class="col-md-12 col-sm-12 col-lg-12">
+                                    <div class="col-md-2 col-sm-2 col-lg-2">
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-lg-6">
+                                        <input type="button" class="col-md-2 col-sm-2 col-lg-2 btn btn-primary" value="Save" style="width: 12%;" id="btnDynamicSave" onclick="SaveChanges();" />
+                                        <input type="button" class="col-md-2 col-sm-2 col-lg-2 btn btn-default" value="Clear" id="btnDynamicClear" style="width: 12%;" onclick="Clear();" />
+                                        <input type="button" class=" col-md-2 col-sm-2 col-lg-2 btn btn-danger" value="Delete All" id="btnDynamicDelete" style="width: 12%;" onclick="DeleteAccounts()" />
+                                        <div class="col-md-4 col-sm-4 col-lg-4">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2> Column Details </h2>
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li style="float:right">
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content" id="columnGridBind" style="overflow-x:scroll;display:none">
+
+                        </div>
+                        <div class="x_content" id="columnAdd">
+                            <table>
+                                <tr>
+                                    <td>
+                                        @Html.LabelFor(model => model.ColumnName, new { @class = "control-label col-md-2", @id = "txtcname" })
+                                    </td>
+                                    <td class="col-md-10">
+                                        @Html.EditorFor(model => model.ColumnName)
+                                        @Html.ValidationMessageFor(model => model.ColumnName)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @Html.LabelFor(model => model.Display_Name, new { @class = "control-label col-md-2", @id = "txtcdisplay" })
+                                    </td>
+                                    <td class="col-md-10">
+                                        @Html.EditorFor(model => model.Display_Name)
+                                        @Html.ValidationMessageFor(model => model.Display_Name)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @Html.LabelFor(model => model.DataType, new { @class = "control-label col-md-2", @id = "txtcdatatype" })
+                                    </td>
+                                    <td class="col-md-10">
+                                        @Html.EditorFor(model => model.DataType)
+                                        @Html.ValidationMessageFor(model => model.DataType)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @*<input type="submit" value="ADD" class="btn btn-primary" />
+                            <input type="button" class="btn btn-primary" value="Save" id="btnDynamicSave" onclick="SaveChanges();" />*@
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        </div>
+
+                    </div>
+
+                <div id="menu2" class="tab-pane fade">
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <h2> Filter Data</h2>
+                                <ul class="nav navbar-right panel_toolbox">
+                                    <li style="float:right">
+                                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                    </li>
+
+                                </ul>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content">
+                                <div class="col-md-12 col-sm-12 col-lg-12">
+                                    <div class="col-md-1 col-sm-1 col-lg-1">
+                                        <label>Category</label>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 col-lg-2">
+                                        <select id="ddlmapcategory" onchange="selectDynamicmaplist(this)" class="form-control customeSelect">
+                                            <option value="Select">Select</option>
+                                            <option value="show">SHOW</option>
+                                            <option value="add">MAPPING</option>
+                                            @*<option value="edit">EDIT</option>*@
+                                        </select>
+                                    </div>
+                                    <div class="col-md-1 col-sm-1 col-lg-1">
+                                        <label>Project</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        @*<select id="ddlMain" onchange="selectChange(this)" class="form-control customeSelect">
+                                <option value="Select">Select</option>
+                            </select>*@
+                                        @Html.DropDownListFor(x => x.SelectedProject, new SelectList(@Model.ProjectList, "Value", "Text"), "-- Select --", new { @class = "form-control", @onchange = "" })
+
+                                    </div>
+                                    <div class="col-md-1 col-sm-1 col-lg-1">
+                                        <label>Practice</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        @*<select id="ddlSub" class="form-control customeSelect" onchange="selectsubmenuChange(this)">
+                                <option value="Select">Select</option>
+                            </select>*@
+                                       @Html.DropDownListFor(x => x.SelectedPractice, new SelectList(@Model.PracticeList, "Value", "Text"), "-- Select --", new { @class = "form-control", @id = "ddlmapPractice", @onchange = "" })
+
+                                    </div>
+                                    <div class="col-md-1 col-sm-1 col-lg-1">
+                                    </div>
+                                </div>
+                                <br />
+                                <br />
+                                <br />
+                                <div class="col-md-12 col-sm-12 col-lg-12">
+                                    <div class="col-md-2 col-sm-2 col-lg-2">
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-lg-6">                                       
+                                        <input type="button" class="col-md-2 col-sm-2 col-lg-2 btn btn-primary" value="Save" id="btnDynamicSave" style="width: 12%;" onclick="return SaveMap()" />
+                                        <input type="button" class="col-md-2 col-sm-2 col-lg-2 btn btn-default" value="Clear" id="btnDynamicClear" style="width: 12%;" onclick="Clear();" />
+                                        <div class="col-md-4 col-sm-4 col-lg-4">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="x_panel">
+                        <div class="x_title">
+                            <h2> Mapping Details </h2>
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li style="float:right">
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content" id="mappingListBind" style="overflow-x:scroll;display:none">
+
+                        </div>
+                    </div>
+
+
+                    </div>
+             <div id="menu3" class="tab-pane fade">
+                 <div class="col-md-12 col-sm-12 col-lg-12">
+                     <div class="x_panel">
+                         <div class="x_title">
+                             <h2> Filter Data</h2>
+                             <ul class="nav navbar-right panel_toolbox">
+                                 <li style="float:right">
+                                     <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                 </li>
+
+                             </ul>
+                             <div class="clearfix"></div>
+                         </div>
+                         <div class="x_content">
+                             <div class="col-md-12 col-sm-12 col-lg-12">
+                                 <div class="col-md-1 col-sm-1 col-lg-1">
+                                     <label>Category</label>
+                                 </div>
+                                 <div class="col-md-2 col-sm-2 col-lg-2">
+                                     <select id="ddlclientCategory" onchange="selectDynamicclientlist(this)" class="form-control customeSelect">
+                                         <option value="Select">Select</option>
+                                         <option value="show">SHOW</option>
+                                         <option value="add">ADD</option>
+                                         @*<option value="edit">EDIT</option>*@
+                                     </select>
+                                 </div>
+                                 <div class="col-md-1 col-sm-1 col-lg-1">
+                                 </div>
+                             </div>
+                             <br />
+                             <br />
+                             <br />
+                             <div class="col-md-12 col-sm-12 col-lg-12">
+                                 <div class="col-md-2 col-sm-2 col-lg-2">
+                                 </div>
+                                 <div class="col-md-6 col-sm-6 col-lg-6">
+                                     <input type="button" class="col-md-2 col-sm-2 col-lg-2 btn btn-primary" value="Save" style="width: 12%;" id="btnclientDynamicSave" onclick="return SaveclientChanges();" />
+                                     <input type="button" class="col-md-2 col-sm-2 col-lg-2 btn btn-default" value="Clear" id="btnDynamicClear" style="width: 12%;" onclick="Clear();" />
+                                     <input type="button" class=" col-md-2 col-sm-2 col-lg-2 btn btn-danger" value="Delete All" id="btnclientDynamicDelete" style="width: 12%;" onclick="DeleteclientAccounts()" />
+                                     <div class="col-md-4 col-sm-4 col-lg-4">
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="x_panel">
+                     <div class="x_title">
+                         <h2> Client Details </h2>
+                         <ul class="nav navbar-right panel_toolbox">
+                             <li style="float:right">
+                                 <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                             </li>
+
+                         </ul>
+                         <div class="clearfix"></div>
+                     </div>
+                     <div class="x_content" id="clientGridBind" style="overflow-x:scroll;display:none">
+
+                     </div>
+                     <div class="x_content" id="clientAdd">
+                         <table>
+                             <tr>
+                                 <td>
+                                     <label class="control-label col-md-2" id="lblclientid">Client ID</label>
+                                 </td>
+                                 <td class="col-md-10">
+                                     <input class="form-control" id="txtclientid" name="txtclientid" type="text" />
+                                 </td>
+                             </tr>
+                             <tr>
+                                 <td>
+                                     <label class="control-label col-md-2" id="lblclientname">Client Name</label>
+                                 </td>
+                                 <td class="col-md-10">
+                                     <input class="form-control" id="txtclientname" name="txtclientname" type="text" />
+                                 </td>
+                             </tr>
+                             <tr>
+                                 <td>
+                                     @*<input type="submit" value="ADD" class="btn btn-primary" />
+                                <input type="button" class="btn btn-primary" value="Save" id="btnDynamicSave" onclick="SaveChanges();" />*@
+                                 </td>
+                             </tr>
+                         </table>
+                     </div>
+                 </div>
+             </div>
+             <div id="menu4" class="tab-pane fade">
+                 <div class="col-md-12 col-sm-12 col-lg-12">
+                     <div class="x_panel">
+                         <div class="x_title">
+                             <h2> Filter Data</h2>
+                             <ul class="nav navbar-right panel_toolbox">
+                                 <li style="float:right">
+                                     <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                 </li>
+
+                             </ul>
+                             <div class="clearfix"></div>
+                         </div>
+                         <div class="x_content">
+                             <div class="col-md-12 col-sm-12 col-lg-12">
+                                 <div class="col-md-1 col-sm-1 col-lg-1">
+                                     <label>Category</label>
+                                 </div>
+                                 <div class="col-md-2 col-sm-2 col-lg-2">
+                                     <select id="ddlAccountCategory" onchange="selectDynamicAccountlist(this)" class="form-control customeSelect">
+                                         <option value="Select">Select</option>
+                                         <option value="show">SHOW</option>
+                                         <option value="add">ADD</option>
+                                         @*<option value="edit">EDIT</option>*@
+                                     </select>
+                                 </div>                                
+                                 <div class="col-md-1 col-sm-1 col-lg-1">
+                                 </div>
+                             </div>
+                             <br />
+                             <br />
+                             <br />
+                             <div class="col-md-12 col-sm-12 col-lg-12">
+                                 <div class="col-md-2 col-sm-2 col-lg-2">
+                                 </div>
+                                 <div class="col-md-6 col-sm-6 col-lg-6">
+                                     <input type="button" class="col-md-2 col-sm-2 col-lg-2 btn btn-primary" value="Save" style="width: 12%;" id="btnaccountDynamicSave" onclick="SaveAccountChanges();" />
+                                     <input type="button" class="col-md-2 col-sm-2 col-lg-2 btn btn-default" value="Clear" id="btnaccountClear" style="width: 12%;" onclick="Clear();" />
+                                     <input type="button" class=" col-md-2 col-sm-2 col-lg-2 btn btn-danger" value="Delete All" id="btnaccountDynamicDelete" style="width: 12%;" onclick="DeleteAccountAccounts()" />
+                                     <div class="col-md-4 col-sm-4 col-lg-4">
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="x_panel">
+                     <div class="x_title">
+                         <h2> Account Details </h2>
+                         <ul class="nav navbar-right panel_toolbox">
+                             <li style="float:right">
+                                 <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                             </li>
+
+                         </ul>
+                         <div class="clearfix"></div>
+                     </div>
+                     <div class="x_content" id="accountGridBind" style="overflow-x:scroll;display:none">
+
+                     </div>
+                     <div class="x_content" id="accountAdd">
+                         <table>
+                             <tr>
+                                 <td>                                    
+                                     <label class="control-label col-md-2" id="lblAccountid">ACCOUNT NO</label>
+                                 </td>
+                                 <td class="col-md-10">
+                                     <input class="form-control" id="txtaccountid" name="txtaccountid" type="text" />                                     
+                                 </td>
+                             </tr>
+                             <tr>
+                                 <td>
+                                     <label class="control-label col-md-2" id="lblclientname">ACCOUNT NAME</label>
+                                 </td>
+                                 <td class="col-md-10">
+                                     <input class="form-control" id="txtaccountname" name="txtaccountname" type="text" />
+                                 </td>
+                             </tr>                      
+                             <tr>
+                                 <td>
+                                     @*<input type="submit" value="ADD" class="btn btn-primary" />
+                        <input type="button" class="btn btn-primary" value="Save" id="btnDynamicSave" onclick="SaveChanges();" />*@
+                                 </td>
+                             </tr>
+                         </table>
+                     </div>
+
+                 </div>
+             </div>
+             <div id="menu5" class="tab-pane fade">
+                 <div class="col-md-12 col-sm-12 col-lg-12">
+                     <div class="x_panel">
+                         <div class="x_title">
+                             <h2> Filter Data</h2>
+                             <ul class="nav navbar-right panel_toolbox">
+                                 <li style="float:right">
+                                     <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                 </li>
+
+                             </ul>
+                             <div class="clearfix"></div>
+                         </div>
+                         <div class="x_content">
+                             <div class="col-md-12 col-sm-12 col-lg-12">
+                                 <div class="col-md-1 col-sm-1 col-lg-1">
+                                     <label>Category</label>
+                                 </div>
+                                 <div class="col-md-2 col-sm-2 col-lg-2">
+                                     <select id="ddlclientCategory" onchange="selectDynamicerrorcatlist(this)" class="form-control customeSelect">
+                                         <option value="Select">Select</option>
+                                         <option value="show">SHOW</option>
+                                         <option value="add">ADD</option>
+                                         @*<option value="edit">EDIT</option>*@
+                                     </select>
+                                 </div>
+                                 <div class="col-md-1 col-sm-1 col-lg-1">
+                                 </div>
+                             </div>
+                             <br />
+                             <br />
+                             <br />
+                             <div class="col-md-12 col-sm-12 col-lg-12">
+                                 <div class="col-md-2 col-sm-2 col-lg-2">
+                                 </div>
+                                 <div class="col-md-6 col-sm-6 col-lg-6">
+                                     <input type="button" class="col-md-2 col-sm-2 col-lg-2 btn btn-primary" value="Save" style="width: 12%;" id="btnerrorcatDynamicSave" onclick="SaveChanges();" />
+                                     <input type="button" class="col-md-2 col-sm-2 col-lg-2 btn btn-default" value="Clear" id="btnDynamicClear" style="width: 12%;" onclick="Clear();" />
+                                     <input type="button" class=" col-md-2 col-sm-2 col-lg-2 btn btn-danger" value="Delete All" id="btnerrorcatDynamicDelete" style="width: 12%;" onclick="DeleteAccounts()" />
+                                     <div class="col-md-4 col-sm-4 col-lg-4">
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="x_panel">
+                     <div class="x_title">
+                         <h2> Client Details </h2>
+                         <ul class="nav navbar-right panel_toolbox">
+                             <li style="float:right">
+                                 <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                             </li>
+
+                         </ul>
+                         <div class="clearfix"></div>
+                     </div>
+                     <div class="x_content" id="errorcatGridBind" style="overflow-x:scroll;display:none">
+
+                     </div>
+                     <div class="x_content" id="errorcatAdd">
+                         <table>
+                             <tr>
+                                 <td>
+                                     <label class="control-label col-md-2" id="lblerrorcatid">Error Category</label>
+                                 </td>
+                                 <td class="col-md-10">
+                                     <input class="form-control" id="txterrorcatid" name="txtclientid" type="text" />
+                                 </td>
+                             </tr>
+                             <tr>
+                                 <td>
+                                     <label class="control-label col-md-2" id="lblerrorcatname">Sub Category</label>
+                                 </td>
+                                 <td class="col-md-10">
+                                     <input class="form-control" id="txterrorcatname" name="txterrorcatname" type="text" />
+                                 </td>
+                             </tr>
+                             <tr>
+                                 <td>
+                                     @*<input type="submit" value="ADD" class="btn btn-primary" />
+                        <input type="button" class="btn btn-primary" value="Save" id="btnDynamicSave" onclick="SaveChanges();" />*@
+                                 </td>
+                             </tr>
+                         </table>
+                     </div>
+
+                 </div>
+             </div>
+            
+
+            </div>
+        </div>
+    
+    <div id="divEDITCol"></div>
+</body>
+</html>
+<script type="text/javascript">
+    var ProjId =@HttpContext.Current.Session[Constants.ProjectId]
+    function selectDynamiccolumnlist(element) {
+        //ClearImg();
+        //alert('hiii');
+        if (element.options[element.selectedIndex].value != 'Select') {
+            if (element.options[element.selectedIndex].value == 'show') {
+
+                $('#columnAdd').css("display", "none");
+                $('#columnGridBind').css("display", "block");
+                LoadColumnInboxGrid();
+            }
+            else if (element.options[element.selectedIndex].value == 'add') {
+
+                $('#columnAdd').css("display", "block");
+                $('#columnGridBind').css("display", "none");
+            }
+            //else if (element.options[element.selectedIndex].value == 'edit') {
+
+            //    $('#columnAdd').css("display", "block");
+            //    $('#mappingListBind').css("display", "none");
+            //}
+
+        }
+        else
+        {
+            $('#columnAdd').css("display", "none");
+            $('#columnGridBind').css("display", "none");
+        }
+    }
+  
+    function LoadColumnInboxGrid() {
+        var PR = $("#ddlPractice option:selected").val();
+        if (PR == 'Select') {
+            alert('Please Select Practice');
+        } else {
+            $.ajax({
+                url: '@Url.Action("LoadColumnInbox")',
+                cache: false,
+                type: 'GET',
+                data: { Practice_Id: PR},
+                dataType: 'html',
+                beforeSend: function () {
+                },
+                success: function (data) {
+                    //alert('success');
+                    $('#columnGridBind').first().html(data);
+                },
+                error: function (jXhr) {
+                    //alert('fail');
+                }
+            });
+        }      
+    }
+
+    function SaveChanges() {
+        //alert($('#ColumnName').val());
+        //alert($('#Display_Name').val());
+       
+        var PR = $("#ddlPractice option:selected").val();
+        if (PR == '0') {
+            alert('Please Select Practice');
+        } else {
+
+            $.ajax({
+                url: '@Url.Action("AddColumnList")',
+                cache: false,
+                type: 'POST',
+                data: { Practice_Id: PR, ColumnName: $('#ColumnName').val(), Display_Name: $('#Display_Name').val(), DataType: $('#DataType').val() },
+                dataType: 'JSON',
+                beforeSend: function () {
+                },
+                success: function (data) {
+                    //document.getElementById('txtcname').value = "";
+                    Clear();
+                    SuccessMessage("Data has been updated");
+                },
+                error: function (jXhr) {
+                    alert(jXhr);
+                }
+            });           
+                }
+    }
+    function Clear() {
+        debugger;
+        $("#ColumnName").val("");
+    $("#Display_Name").val("");
+    $("#DataType").val("");
+    window.location.reload();
+    //$('#home').load('/Admin/AdminIndex');
+
+
+    }
+
+    function selectDynamicmaplist(element) {
+        //ClearImg();
+        //alert('hiii')
+        if (element.options[element.selectedIndex].value != 'Select') {
+            if (element.options[element.selectedIndex].value == 'show') {
+
+                //$('#columnAdd').css("display", "none");
+                $('#mappingListBind').css("display", "block");
+                LoadMapInboxGrid();
+            }
+            else if (element.options[element.selectedIndex].value == 'add') {
+
+                //$('#columnAdd').css("display", "block");
+                $('#mappingListBind').css("display", "block");
+                LoadMapInboxGrid();
+            }
+            else if (element.options[element.selectedIndex].value == 'edit') {
+
+                //$('#columnAdd').css("display", "block");
+                $('#mappingListBind').css("display", "block");
+                LoadMapInboxGrid();
+            }
+
+        }
+        else {
+            //$('#columnAdd').css("display", "none");
+            $('#mappingListBind').css("display", "none");
+        }
+    }
+    function LoadMapInboxGrid() {
+        var PR = $("#ddlmapPractice option:selected").val();
+        if (PR == 'Select') {
+            alert('Please Select Practice');
+        } else {
+            debugger;
+            $.ajax({
+                url: '@Url.Action("LoadMapInbox")',
+                cache: false,
+                type: 'GET',
+                data: { Practice_Id: PR },
+                dataType: 'html',
+                beforeSend: function () {
+                },
+                success: function (data) {
+                    debugger;
+                    $('#mappingListBind').first().html(data);
+                },
+                error: function (jXhr) {
+                    alert(jXhr);
+                }
+            });
+        }
+    }
+
+
+    function SaveMap() {
+        debugger;
+       
+        var img_id = $("#formMappingGrid input:text").val();
+        var Select = $("#ddlmapcategory option:selected").val();
+        if (Select == 'add') {
+            var PR = $("#ddlmapPractice option:selected").val();
+            if (PR == '0') {
+                alert('Please Select Practice');
+            } else {
+
+                $.ajax({
+                    url: '@Url.Action("AddMappingList")',
+                    cache: false,
+                    type: 'POST',
+                    data: { Practice_Id: PR, ColumnID: img_id },
+                    dataType: 'JSON',
+                    beforeSend: function () {
+                    },
+                    success: function (data) {
+                        //document.getElementById('txtcname').value = "";
+                        Clear();
+                        SuccessMessage("Data has been updated");
+                    },
+                    error: function (jXhr) {
+                        alert(jXhr);
+                    }
+                });
+            }
+        }
+        else
+        {
+            alert('Please Select Mapping to add a new map');
+        }
+    }
+    var checkList = [];
+    
+    function DeleteAccounts() {
+            var checked = $("#frmcolumn input:checked").length > 0;
+            if (!checked) {
+                ErrorMessage("Please select at least one account");
+                return false;
+            }
+                        
+            var tableControl = document.getElementById('tbl_Account');
+            var arrayOfcolumnid=0;
+            var arrayOfcolumnname='';
+            $('input:checkbox:checked', tableControl).each(function () {
+
+                checkList.push($(this).attr("id"));
+                
+                arrayOfcolumnid = arrayOfcolumnid + "," + $(this).closest('tr').find('td:eq(2)').text();
+                arrayOfcolumnname = arrayOfcolumnname + "," + $(this).closest('tr').find('td:eq(3)').text();
+           
+            }).get();
+            alert(arrayOfcolumnid);
+            alert(arrayOfcolumnname);
+            debugger;
+            $.ajax({
+                url: '@Url.Action("DeleteColumnAll")',
+                cache: false,
+                type: 'POST',
+                data: { arrayOfcolumnid: arrayOfcolumnid, arrayOfcolumnname: arrayOfcolumnname },
+                dataType: 'JSON',
+                beforeSend: function () {
+                },
+                success: function (data) {
+                    //LoadAllotmentGrid('', '', '');
+                    LoadColumnInboxGrid();
+                    SuccessMessage('Data has been updated');
+                },
+                error: function (jXhr) {
+                    alert(jXhr);
+                }
+            });
+            //});
+    }
+
+    function selectDynamicclientlist(element) {
+        //ClearImg();
+        //alert('hiii');
+        if (element.options[element.selectedIndex].value != 'Select') {
+            if (element.options[element.selectedIndex].value == 'show') {
+
+                $('#clientAdd').css("display", "none");
+                $('#clientGridBind').css("display", "block");
+                LoadClientInboxGrid();
+            }
+            else if (element.options[element.selectedIndex].value == 'add') {
+
+                $('#clientAdd').css("display", "block");
+                $('#clientGridBind').css("display", "none");
+            }
+            //else if (element.options[element.selectedIndex].value == 'edit') {
+
+            //    $('#columnAdd').css("display", "block");
+            //    $('#mappingListBind').css("display", "none");
+            //}
+
+        }
+        else {
+            $('#clientAdd').css("display", "none");
+            $('#clientGridBind').css("display", "none");
+        }
+    }
+    function LoadClientInboxGrid() {        
+            $.ajax({
+                url: '@Url.Action("LoadClientInbox")',
+                cache: false,
+                type: 'GET',
+                data: { },
+                dataType: 'html',
+                beforeSend: function () {
+                },
+                success: function (data) {
+                    alert('success');
+                    $('#clientGridBind').first().html(data);
+                },
+                error: function (jXhr) {
+                    alert('fail');
+                }
+            });        
+    }
+    function SaveclientChanges() {
+        debugger;
+        
+        
+        var Select = $("#ddlclientCategory option:selected").val();
+        if (Select == 'add') {
+
+            $.ajax({
+                url: '@Url.Action("AddClientList")',
+                cache: false,
+                type: 'POST',
+                data: { clientid: $("#txtclientid").val(), clientname: $("#txtclientname").val() },
+                dataType: 'JSON',
+                beforeSend: function () {
+                },
+                success: function (data) {
+                    //document.getElementById('txtcname').value = "";
+                    Clear();
+                    SuccessMessage("Data has been updated");
+                },
+                error: function (jXhr) {
+                    alert(jXhr);
+                }
+            });
+        }
+        else {
+            alert('Please Select ADD to add a new Client');
+        }
+    }
+
+    function DeleteclientAccounts() {
+        debugger;
+        var checked = $("#frmclient input:checked").length > 0;
+        if (!checked) {
+            ErrorMessage("Please select at least one account");
+            return false;
+        }
+        var tableControl = document.getElementById('tbl_Account');
+        var arrayOfclientid = 0;
+        $('input:checkbox:checked', tableControl).each(function () {
+            checkList.push($(this).attr("id"));
+            arrayOfclientid = arrayOfclientid + "," + $(this).closest('tr').find('td:eq(2)').text();
+            //arrayOfcolumnid = arrayOfcolumnid + "," + $(this).closest('tr').find('td:eq(2)').text();
+        }).get();
+        alert(arrayOfclientid);        
+        debugger;
+        $.ajax({
+            url: '@Url.Action("DeleteClientAll")',
+            cache: false,
+            type: 'POST',
+            data: { arrayOfclientid: arrayOfclientid },
+            dataType: 'JSON',
+            beforeSend: function () {
+            },
+            success: function (data) {
+                //LoadAllotmentGrid('', '', '');
+                LoadClientInboxGrid();
+                SuccessMessage('Data has been updated');
+            },
+            error: function (jXhr) {
+                alert(jXhr);
+            }
+        });
+        //});
+    }
+
+    function selectDynamicAccountlist(element) {
+        //ClearImg();
+        //alert('hiii');
+        if (element.options[element.selectedIndex].value != 'Select') {
+            if (element.options[element.selectedIndex].value == 'show') {
+
+                $('#accountAdd').css("display", "none");
+                $('#accountGridBind').css("display", "block");
+                LoadAccountInboxGrid();
+            }
+            else if (element.options[element.selectedIndex].value == 'add') {
+
+                $('#accountAdd').css("display", "block");
+                $('#accountGridBind').css("display", "none");
+            }
+            //else if (element.options[element.selectedIndex].value == 'edit') {
+
+            //    $('#columnAdd').css("display", "block");
+            //    $('#mappingListBind').css("display", "none");
+            //}
+
+        }
+        else {
+            $('#accountAdd').css("display", "none");
+            $('#accountGridBind').css("display", "none");
+        }
+    }
+    function LoadAccountInboxGrid() {
+        $.ajax({
+            url: '@Url.Action("LoadAccountInbox")',
+            cache: false,
+            type: 'GET',
+            data: {},
+            dataType: 'html',
+            beforeSend: function () {
+            },
+            success: function (data) {
+                alert('success');
+                $('#accountGridBind').first().html(data);
+            },
+            error: function (jXhr) {
+                alert('fail');
+            }
+        });
+    }
+    function SaveAccountChanges() {
+        debugger;
+
+
+        var Select = $("#ddlAccountCategory option:selected").val();
+        if (Select == 'add') {
+
+            $.ajax({
+                url: '@Url.Action("AddAccountList")',
+                cache: false,
+                type: 'POST',
+                data: { Accountno: $("#txtaccountid").val(), Accountname: $("#txtAccountname").val() },
+                dataType: 'JSON',
+                beforeSend: function () {
+                },
+                success: function (data) {
+                    //document.getElementById('txtcname').value = "";
+                    Clear();
+                    SuccessMessage("Data has been updated");
+                },
+                error: function (jXhr) {
+                    alert(jXhr);
+                }
+            });
+        }
+        else {
+            alert('Please Select ADD to add a new Client');
+        }
+    }
+
+    function DeleteAccountAccounts() {
+        debugger;
+        var checked = $("#frmAccount input:checked").length > 0;
+        if (!checked) {
+            ErrorMessage("Please select at least one account");
+            return false;
+        }
+        var tableControl = document.getElementById('tbl_Account');
+        var arrayOfAccountid = 0;
+        $('input:checkbox:checked', tableControl).each(function () {
+            checkList.push($(this).attr("id"));
+            arrayOfAccountid = arrayOfAccountid + "," + $(this).closest('tr').find('td:eq(2)').text();
+            //arrayOfcolumnid = arrayOfcolumnid + "," + $(this).closest('tr').find('td:eq(2)').text();
+        }).get();
+        alert(arrayOfAccountid);
+        debugger;
+        $.ajax({
+            url: '@Url.Action("DeleteAccountAll")',
+            cache: false,
+            type: 'POST',
+            data: { arrayOfAccount_no: arrayOfAccountid },
+            dataType: 'JSON',
+            beforeSend: function () {
+            },
+            success: function (data) {
+                //LoadAllotmentGrid('', '', '');
+                LoadAccountInboxGrid();
+                SuccessMessage('Data has been updated');
+            },
+            error: function (jXhr) {
+                alert(jXhr);
+            }
+        });
+        //});
+    }
+</script>
+

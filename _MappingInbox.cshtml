@@ -1,0 +1,239 @@
+﻿@using Denial_Coding.BAL.Generics
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @id = "formMappingGrid" }))
+{
+    <div id="dvCategoryResults">   
+        <table class="table table-striped responsive-utilities jambo_table bulk_action customTable" id="DisplayGrid">
+            <thead>
+                <tr class="heading">
+                    @*<th class="sorting"><label>S.No</label></th>*@
+                    @*@foreach (System.Data.DataColumn col in Model.Columns)
+                    {
+                        <th>@col.Caption</th>
+                    }*@
+                    <th><label>SL NO</label></th>
+                    <th align="center"></th>
+                    <th><label>Column Name</label>
+                    <th><label>SL NO</label></th>
+                    <th align="center"></th>
+                    <th><label>Column Name</label>
+                    <th><label>SL NO</label></th>
+                    <th align="center"></th>
+                    <th><label>Column Name</label>
+                    <th><label>SL NO</label></th>
+                    <th align="center"></th>
+                    <th><label>Column Name</label>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (System.Data.DataRow row in Model.Rows)
+                {
+                    <tr>
+                        @*@foreach (var cell in row.ItemArray)
+                        {
+                            //if (cell.ToString().EndsWith("="))
+                            //{
+                            <td>@cell.ToString() </td>
+
+                            @*}
+                                else
+                                {
+                                    <td>@cell.ToString() </td>
+                                }
+                            
+                            }*@
+                        <td class="count" width="5%" align="center"></td>
+                        <td style="width:5%;" align="center">
+                            @if (row["check_list_odd"].ToString() == "true")
+                            {
+                                <span style="width: 5%; float: left;">
+                                    <img id="@("img_" + row["Column_Id"])" src="~/CustomStyles/images/tick.png" onclick="TestClick(@row["Column_Id"].ToString());" width="25" />
+                                </span>
+                            }
+                            @*<input type="image" name="img" id="@("img_" + row["Column_Id"])" src="~/Images/White-7.jpg" value="@row["Column_Id"].ToString()" width="25" onclick="TestClick(@row["Column_Id"].ToString());" />*@
+                                @*<input type="image" name="img" id="@("img_" + row["Column_Id"])" src="~/Images/tick.png" value="@row["Column_Id"].ToString()" width="25" style="display:none;" onclick="TestClick(@row["Column_Id"].ToString());" />*@
+
+                                <span style="width: 5%; float: left;">
+                                    <img id="@("img_" + row["Column_Id"])" src="~/CustomStyles/images/tick.png" onclick="TestClick(@row["Column_Id"].ToString());" style="display: none; width:25px;" width="25" />
+                                </span>
+                            </td>
+                        <td style="width:15%;" align="center">
+                            <span onclick="TestClick(@row["Column_Id"].ToString());" style="float:left;">
+                                @Html.Hidden("lblColumn_ID", @row["Column_Id"].ToString())
+                                @Html.Label("lblColumn_Name", @row["Column_Name"].ToString(), new { @style = "width: 100px;" })
+                            </span>
+                        </td>
+
+
+@if (row["cname_sec"].ToString() == "")
+{
+    <td colspan="2" align="center"></td>
+}
+else
+{
+
+                        <td class="count" width="5%" align="center"></td>
+                        <td style="width:5%;" align="center">
+                            @if (row["check_list_even_sec"].ToString() == "true")
+                            {
+                                <span style="width: 5%; float: left;">
+                                    <img id="@("img_" + row["cid_sec"])" src="~/CustomStyles/images/tick.png" onclick="TestClick(@row["cid_sec"].ToString());" width="25" />
+                                </span>
+                            }
+                            @*<input type="image" name="img" id="@("img_" + row["Column_Id"])" src="~/Images/White-7.jpg" value="@row["Column_Id"].ToString()" width="25" onclick="TestClick(@row["Column_Id"].ToString());" />*@
+                                @*<input type="image" name="img" id="@("img_" + row["Column_Id"])" src="~/Images/tick.png" value="@row["Column_Id"].ToString()" width="25" style="display:none;" onclick="TestClick(@row["Column_Id"].ToString());" />*@
+
+                                <span style="width: 5%; float: left;">
+                                    <img id="@("img_" + row["cid_sec"])" src="~/CustomStyles/images/tick.png" onclick="TestClick(@row["cid_sec"].ToString());" style="display: none; width:25px;" width="25" />
+                                </span>
+                            </td>
+                        <td style="width:15%;" align="center">
+                            <span onclick="TestClick(@row["cid_sec"].ToString());" style="float:left;">
+                                @Html.Hidden("lblC_ID_Sec", @row["cid_sec"].ToString())
+                                @Html.Label("lblC_Name_Sec", @row["cname_sec"].ToString(), new { @style = "width: 200px;" })
+                            </span>
+                        </td>
+
+}
+
+
+@if (row["cname_third"].ToString() == "")
+{
+    <td colspan="2" align="center"></td>
+}
+else
+{
+
+
+                        <td class="count" width="5%" align="center"></td>
+                        <td style="width:5%;" align="center">
+                            @if (row["check_list_even_third"].ToString() == "true")
+                            {
+                                <span style="width: 5%; float: left;">
+                                    <img id="@("img_" + row["cid_third"])" src="~/CustomStyles/images/tick.png" onclick="TestClick(@row["cid_third"].ToString());" width="25" />
+                                </span>
+                            }                           
+                                <span style="width: 5%; float: left;">
+                                    <img id="@("img_" + row["cid_third"])" src="~/CustomStyles/images/tick.png" onclick="TestClick(@row["cid_third"].ToString());" style="display: none; width:25px;" width="25" />
+                                </span>
+                            </td>
+                        <td style="width:15%;" align="center">
+                            <span onclick="TestClick(@row["cid_third"].ToString());" style="float:left;">
+                                @Html.Hidden("lblC_ID", @row["cid_third"].ToString())
+                                @Html.Label("lblC_Name", @row["cname_third"].ToString(), new { @style = "width: 200px;" })
+                            </span>
+                        </td>
+}
+
+
+@if (row["cname_four"].ToString() == "")
+{
+    <td colspan="2" align="center"></td>
+}
+else
+{
+
+                        <td class="count" width="5%" align="center"></td>
+                        <td style="width:5%;" align="center">
+                            @if (row["check_list_even_four"].ToString() == "true")
+                            {
+                                <span style="width: 5%; float: left;">
+                                    <img id="@("img_" + row["cid_four"])" src="~/CustomStyles/images/tick.png" onclick="TestClick(@row["cid_four"].ToString());" width="25" />
+                                </span>
+                            }
+                            @*<input type="image" name="img" id="@("img_" + row["Column_Id"])" src="~/Images/White-7.jpg" value="@row["Column_Id"].ToString()" width="25" onclick="TestClick(@row["Column_Id"].ToString());" />*@
+                                @*<input type="image" name="img" id="@("img_" + row["Column_Id"])" src="~/Images/tick.png" value="@row["Column_Id"].ToString()" width="25" style="display:none;" onclick="TestClick(@row["Column_Id"].ToString());" />*@
+
+                                <span style="width: 5%; float: left;">
+                                    <img id="@("img_" + row["cid_four"])" src="~/CustomStyles/images/tick.png" onclick="TestClick(@row["cid_four"].ToString());" style="display: none; width:25px;" width="25" />
+                                </span>
+                            </td>
+                        <td style="width:15%;" align="center">
+                            <span onclick="TestClick(@row["cid_four"].ToString());" style="float:left;">
+                                @Html.Hidden("lblC_ID_four", @row["cid_four"].ToString())
+                                @Html.Label("lblC_Name_four", @row["cname_four"].ToString(), new { @style = "width: 100px;" })
+                            </span>
+                        </td>
+}
+                     
+
+
+                    </tr>                        
+                }
+
+            </tbody>
+        </table>   
+        </div>
+    @*@Html.Hidden("input_hidden_field")*@
+    <input type="text" value="" id="txtHidden" style="display:none"/>
+}
+
+@*@Html.HiddenFor(x => row[0], new { @id = "btId" })*@
+<style type="text/css">
+    /*body {
+        background: whitesmoke !important;
+    }*/
+
+    table {
+        counter-reset: section;
+    }
+
+    .count:before {
+        counter-increment: section;
+        content: counter(section);
+    }
+</style> 
+
+<script type="text/javascript">   
+    function TestClick(id) {
+        debugger;
+        var imgid = "img_" + id;
+        var j = $('#' + imgid).css("display");
+
+        if (j == "none") {
+            $('#' + imgid).css("display", "block");
+            //all[countImagesWithoutSrc] = id;
+            //++countImagesWithoutSrc;           
+        }
+        else {
+            $('#' + imgid).css("display", "none");
+            //for (var i = all.length - 1; i--;) {
+            //    if (all[i] === id)
+            //        all.splice(i, 1);
+            //}
+            //--countImagesWithoutSrc;
+        }
+
+        var imgs = document.getElementById('dvCategoryResults').getElementsByTagName('img');
+        var countImagesWithoutSrc = 0;
+        var all = new Array();
+        var curImg;
+        for (var i = 0; i < imgs.length; i++) {
+            curImg = imgs[i];
+            if ($(curImg).css('display') != 'none') {
+                var newVal =id;
+                all[countImagesWithoutSrc] = newVal;
+                ++countImagesWithoutSrc;
+                //alert(all[i]);
+            }
+        }
+        $('#txtHidden').val(all);
+        
+        //alert($('#txtHidden').val());
+    }
+    $(document).ready(function () {
+        $('#DisplayGrid').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false
+        });
+    });
+
+   
+
+
+    </script>

@@ -1,0 +1,124 @@
+﻿@{
+    int sno = 1;
+}
+<form id="frmAccount">
+    <div class="x_content" id="clientlist">
+        <table class="table table-striped responsive-utilities jambo_table bulk_action customTable" id="tbl_Account">
+            <thead>
+                <tr class="heading">
+                    <th><input type="checkbox" name="chemeli" class="checkbox" id="chkqcInboxGroup" /></th>
+                    <th class="sorting"><label>S.No</label></th>
+                    <th style="display:none"><label>Account ID</label></th>
+                    <th><label>Account NO</label>
+                    <th><label>Account NAME</label></th>
+                    <th><label>UPDATED BY</label></th>
+                    <th><label>UPDATED DATE</label></th>
+                    @*<th><label>Edit Column</label></th>
+                        <th><label>Delete Column</label></th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (System.Data.DataRow row in Model.Rows)
+                {
+                    <tr>
+                        <td><input type="checkbox" class="checkbox allotChk chk_@Convert.ToInt32(sno)" id="chk_@Convert.ToInt32(sno)" /></td>
+                        <td id=@Convert.ToInt32(sno)>@Convert.ToInt32(sno)</td>
+
+                        @Html.HiddenFor(x => row[0], new { @id = "btId" })
+                        @foreach (var cell in row.ItemArray)
+                        {
+                            <td>@cell.ToString() </td>
+                        }
+                        @*<td><u><a onclick="EditClient('@row[0]')" class="btn btn-success">Edit Column</a></u></td>
+                            <td><u><a class="btn btn-info" onclick="DeleteClient('@row[0]')">Delete Column</a></u></td>*@
+                    </tr>
+                        sno++;
+                }
+
+            </tbody>
+
+        </table>
+    </div>
+  
+
+
+</form>
+<script>
+
+    $(document).ready(function () {
+        $('#tbl_Account').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "columnDefs": [
+                        {
+                            "targets": [1],
+                            "bSortable": false,
+                        },
+                        {
+                            "targets": [2],
+                            "visible": false
+
+                        }
+            ]
+
+        });
+
+    });
+
+    function EditClient(ClientID) {
+        debugger;
+        $.ajax({
+            url: '@Url.Action("EditAccountList")',
+            cache: false,
+            type: 'GET',
+            dataType: 'html',
+            data: { CID: ClientID },
+            beforeSend: function () {
+            },
+            success: function (data) {
+
+                $('#AccountEdit').first().html(data);
+                //alert('Success');
+
+            },
+            error: function (jXhr) {
+                alert(jXhr);
+            }
+        });
+    }
+
+
+    function DeleteClient(ClientID) {
+        debugger;
+        $.ajax({
+            url: '@Url.Action("DeleteAccountList")',
+            cache: false,
+            type: 'POST',
+            data: { ClientID: ClientID },
+            dataType: 'JSON',
+            beforeSend: function () {
+            },
+            success: function (data) {
+                //document.getElementById('txtcname').value = "";
+                LoadClientInboxGrid()
+                SuccessMessage("Data has been deleted");
+            },
+            error: function (jXhr) {
+                //LoadClientInboxGrid()
+                //SuccessMessage("Data has been deleted");
+            }
+        });
+    }
+
+    $("#chkqcInboxGroup").click(function () {
+        $(".allotChk").prop('checked', $(this).prop('checked'));
+    });
+
+
+</script>
+
+

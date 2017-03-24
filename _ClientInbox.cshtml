@@ -1,0 +1,183 @@
+﻿
+@{
+    int sno = 1;
+}
+<form id="frmclient">
+    <div class="x_content" id="clientlist">
+        <table class="table table-striped responsive-utilities jambo_table bulk_action customTable" id="tbl_Account">
+            <thead>
+                <tr class="heading">
+                    <th><input type="checkbox" name="chemeli" class="checkbox" id="chkqcInboxGroup" /></th>
+                    <th class="sorting"><label>S.No</label></th>
+                    <th style="display:none"><label>Column ID</label></th>
+                    <th><label>CLIENT ID</label>
+                    <th><label>CLIENT NAME</label></th>
+                    <th><label>UPDATED BY</label></th>
+                    <th><label>UPDATED DATE</label></th>
+                    @*<th><label>Edit Column</label></th>
+                    <th><label>Delete Column</label></th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (System.Data.DataRow row in Model.Rows)
+            {
+            <tr>
+                <td><input type="checkbox" class="checkbox allotChk chk_@Convert.ToInt32(sno)" id="chk_@Convert.ToInt32(sno)" /></td>
+                <td id=@Convert.ToInt32(sno)>@Convert.ToInt32(sno)</td>
+
+                @Html.HiddenFor(x => row[0], new { @id = "btId" })
+                @foreach (var cell in row.ItemArray)
+                    {
+                    <td>@cell.ToString() </td>
+                    }
+                @*<td><u><a onclick="EditClient('@row[0]')" class="btn btn-success">Edit Column</a></u></td>
+                <td><u><a class="btn btn-info" onclick="DeleteClient('@row[0]')">Delete Column</a></u></td>*@
+            </tr>
+                    sno++;
+            }
+
+            </tbody>
+
+        </table>
+        </div>
+        @*@Html.HiddenFor(x => row[0], new { @id = "btId" })*@
+
+        @if (ViewBag.AuthorList == null)
+        {
+
+        }
+        else
+        {
+            @*<div class="x_content" id="clientEdit">
+
+                @foreach (System.Data.DataRow row in ViewBag.AuthorList.Rows)
+                {
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <button type="button" tabindex="0" class="close" data-dismiss="modal" onclick="CloseModal()">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">Column Details</h4>
+                        </div>
+                        <table>
+                            <tr>
+                                <td>
+                                    <label class="control-label col-md-2" id="lblclientid">CID</label>
+                                </td>
+                                <td class="col-md-10">
+                                    <input class="form-control" id="txtcid" name="txtcid" type="text" value="@row[0]" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="control-label col-md-2" id="lblclientid">Client ID</label>
+                                </td>
+                                <td class="col-md-10">
+                                    <input class="form-control" id="txtclientid" name="txtclientid" type="text" value="@row[1]" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label class="control-label col-md-2" id="lblclientname">Client Name</label>
+                                </td>
+                                <td class="col-md-10">
+                                    <input class="form-control" id="txtclientname" name="txtclientname" type="text" value="@row[2]" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="modal-footer" style="text-align:center">
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="CloseModal()">Close</button>
+                    </div>
+                }
+                }
+            </div>*@
+        }
+
+
+</form>
+<script>
+
+    $(document).ready(function () {
+        $('#tbl_Account').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "columnDefs": [
+                        {
+                            "targets": [1],
+                            "bSortable": false,
+                        },
+                        {
+                            "targets": [2],
+                            "visible": false
+
+                        }
+            ]
+
+        });
+
+    });
+
+    function EditClient(ClientID) {
+        debugger;
+        $.ajax({
+            url: '@Url.Action("EditClientList")',
+            cache: false,
+            type: 'GET',
+            dataType: 'html',
+            data: { CID: ClientID },
+            beforeSend: function () {
+            },
+            success: function (data) {
+
+                $('#clientEdit').first().html(data);
+                //alert('Success');
+
+            },
+            error: function (jXhr) {
+                alert(jXhr);
+            }
+        });
+    }
+
+
+    function DeleteClient(ClientID) {
+        debugger;
+        $.ajax({
+            url: '@Url.Action("DeleteClientList")',
+            cache: false,
+            type: 'POST',
+            data: { ClientID: ClientID },
+            dataType: 'JSON',
+            beforeSend: function () {
+            },
+            success: function (data) {
+                //document.getElementById('txtcname').value = "";
+                LoadClientInboxGrid()
+                SuccessMessage("Data has been deleted");
+            },
+            error: function (jXhr) {
+                //LoadClientInboxGrid()
+                //SuccessMessage("Data has been deleted");
+            }
+        });
+    }
+
+    $("#chkqcInboxGroup").click(function () {
+        $(".allotChk").prop('checked', $(this).prop('checked'));
+    });
+
+
+</script>
+
