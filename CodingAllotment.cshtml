@@ -1,0 +1,350 @@
+﻿@model Denial_Coding.BAL.ViewModels.AllotmentModel
+@using Denial_Coding.BAL.Generics
+@{
+    ViewBag.Title = "Coding Allotment";
+}
+
+<h2>Coder Allotment</h2>
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @id = "formCodingAllot" }))
+{
+    @*<body>*@
+    <div class="col-md-12 col-sm-12 col-xs-12" id="divCPTDetails">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Data Filter</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li style="float:right">
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div class="row">
+                    <div class="col-md-2 col-sm-2 col-lg-2">
+                        <label>Select Practice</label>
+                        @Html.DropDownListFor(x => Model.SelectedPractice, new SelectList(@Model.PracticeList, "Value", "Text"), "-- Select --", new { @class = "form-control", @id = "ddlPractice", @onchange = "CallStatusChangefunc(this.value)" })
+                    </div>
+                    <div class="col-md-2 col-sm-2 col-lg-2">
+                        <label>Status</label>
+@Html.DropDownList("Status", new List<SelectListItem>
+     { new SelectListItem { Text = "Fresh", Value = "Fresh"},
+       new SelectListItem { Text = "Coding Allotted", Value = "Coding Allotted"},
+       }, "-- Select --", new { @class = "form-control", @id = "ddlstatus", @onchange = "CallStatusChangefunc(this.value)" })
+                    </div>
+
+                    <div class="col-md-2 col-sm-2 col-lg-2">
+                        <label id="lblFromDOS">From DOS</label>
+                        <input type="text" class="form-control has-feedback-left active form-control" id="txtFromDOS" />
+                    </div>
+                    <div class="col-md-2 col-sm-2 col-lg-2">
+                        <label id="lblToDOS">To DOS</label>
+                        <input type="text" class="form-control has-feedback-left active form-control" id="txtToDOS" onchange="return LoadAllotmentGrid();" />
+                    </div>
+                    <div class="col-md-1 col-sm-1 col-lg-1">
+                        <label>From</label>
+                        @Html.TextBoxFor(x => x.From, new { @class = "form-control" })
+                    </div>
+                    <div class="col-md-1 col-sm-1 col-lg-1">
+                        <label>To</label>
+                        @Html.TextBoxFor(x => x.To, new {  @class = "form-control"})
+                    </div>
+                    <div class="col-md-2 col-sm-2 col-lg-2">
+                        <label>Select Coder</label>
+                        @Html.DropDownListFor(x => x.SeletedCoder, new SelectList(@Model.CoderList, "Text", "Text"), "-- Select --", new { @class = "form-control" })
+                    </div>
+                    @Html.HiddenFor(x => x.SessionAccounts)
+                </div>
+                <div class="row">
+                    <div class="col-md-2 col-sm-2 col-lg-2">
+                        <button type="button" class="btn btn-primary" accesskey="a" style="margin-top:9%" id="btnAllot" onclick="SubmittingAllotForm('Allot')">Allot</button>
+                        @*<button type="button" class="btn btn-success" id="btnSubmit" style=" margin-top:9% ;display:none" onclick="SubmittingForm1('Submit')">Submit</button>*@
+                        <button type="button" class="btn btn-info" id="btnExport" style="margin-top:9% ;display:none" onclick="SubmittingExportbtn()">Export</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <div class="col-md-12 col-sm-12 col-xs-12" id="divCPTDetails">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Accounts Summary<small>Users</small></h2>
+                <ul class="nav navbar-right panel_toolbox">
+                    <li style="float:right">
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="x_content" id="allotGridBind">
+
+            </div>
+        </div>
+    </div>
+
+
+    @*</body>*@
+}
+<script>
+    var ProjId =@HttpContext.Current.Session[Constants.ProjectId]
+    $(function () {        
+        LoadAllotmentGrid('', '', '');
+
+        CustumDatePicker('txtFromDOS');
+
+        $('#txtToDOS').daterangepicker({
+            singleDatePicker: true,
+            calender_style: "picker_1"
+        }, function (start, end, label) {
+
+            var fromDate = $('#txtFromDOS').val();
+            var toDate = $('#txtToDOS').val();
+
+            if (fromDate > toDate) {
+                ErrorMessage('TO date must be greater than from date');//TO date must be greater than from date
+                $('#txtToDOS')
+                return false;
+            }
+            if ($("#Status option:selected").val() == "-- Select --") {
+                ErrorMessage('Please Select Status');
+                $('#Status').focus();
+                return false;
+            }
+            if ($('#txtFromDOS').val() == "") {
+                ErrorMessage('Please Select From Dos');
+                $('#txtFromDOS').focus();
+                return false;
+            }
+            else {
+                LoadAllotmentGrid($("#Status option:selected").text(), $('#txtFromDOS').val(), $('#txtToDOS').val());
+                return false;
+            }
+        });
+
+    });
+    $('#txtFromDOS').focusout(function () {
+        if ($('#txtFromDOS').val() == "" && $('#txtToDOS').val() == "") {           
+            LoadAllotmentGrid($("#Status option:selected").val(), '', '');
+        }
+    });
+
+    $("#From").keypress(function (e) {
+        //if the letter is not digit then display error and don't type anything
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+            ErrorMessage('Digits Only');
+            return false;
+        }
+    });
+
+    $("#To").keypress(function (e) {
+        //if the letter is not digit then display error and don't type anything
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+            ErrorMessage('Digits Only');
+            return false;
+        }
+    });
+
+    function LoadAllotmentGrid(Status, FromDos, ToDos) {              
+        //alert($("#ddlstatus option:selected").val());
+        if (($("#ddlstatus option:selected").val() == 'Coding Allotted')) {
+            $('#btnAllot').text("Re-Allot");
+        }
+        else {
+            $('#btnAllot').text("Allot");
+        }
+
+       
+        if (($("#ddlstatus option:selected").val() == 'Coding Allotted')) {
+                $('#btnExport').show();
+            }
+            else
+            {
+                $('#btnExport').hide();
+        }
+        var status ='';
+        if($("#ddlstatus option:selected").val()=='--Select--' || $("#ddlstatus option:selected").val()=='Fresh' || $("#ddlstatus option:selected").val()=='')
+        {
+            status = '';
+        }
+        else
+        {
+            status = $("#ddlstatus option:selected").val();
+        }
+            var practiceId =$("#ddlPractice option:selected").val();
+            if (practiceId == 'Select') {
+                alert('Please Select Practice');
+            } else {
+                debugger;
+                $.ajax({
+                    url: '@Url.Action("GetAccountDetails")',
+                    cache: false,
+                    type: 'GET',
+                    dataType: 'html',
+                    data: { status: status, fromDos: FromDos, toDos: ToDos, practiceId: practiceId },
+                    beforeSend: function () {
+                    },
+                    success: function (data) {                        
+                        $('#allotGridBind').first().html(data);
+                    },
+                    error: function (jXhr) {
+                                           }
+                });
+            }
+    }
+
+    function UnCheckedfun() {
+        var pageSize = $("[name = 'allotGrid_length']").val();
+        $("input:checkbox");//.prop('checked',false)
+        for (var i = 1; i <= pageSize; i++) {
+            var sno = $("#chk_" + i).selector;
+            console.log(sno);
+            $(sno).attr('checked', false);
+        }
+    }
+
+
+    $('#To').focusout(function () {
+        debugger;
+        $('.allotChk').prop('checked', false);
+
+        var from = Number($('#From').val().trim());
+        var to = Number($('#To').val().trim());
+        if (from > to) {
+            ErrorMessage("To range must be greaterthan From");
+            $('#From').focus();
+            return false;
+        }
+        if (from <= 0) {
+            ErrorMessage("Please enter from range");
+            $('#From').focus();
+            return false;
+        }
+        else {
+            $("input:checkbox");//.prop('checked',false)
+            for (var i = from; i <= to; i++) {
+                var sno = $("#chk_" + i).selector;
+                console.log(sno);
+                $(sno).prop('checked', true);
+            }
+        }
+    });
+   
+    function CallStatusChangefunc(val) {        
+        LoadAllotmentGrid($("#Status option:selected").val(), '', '')
+
+    }
+
+    var arrayOfAccounts = new Array();
+    var checkList = [];
+
+    function SubmittingAllotForm(bText) {
+        var checked = $("#formAllotGrid input:checked").length > 0;
+        if (!checked) {
+            ErrorMessage("Please select at least one account");
+            return false;
+        }
+
+        if ($("#SeletedCoder option:selected").text() == "-- Select --") {
+            ErrorMessage("Please select Coder");
+            $('#SeletedCoder').focus();
+            return false;
+        }
+        
+        bText = $("#btnAllot").text()
+
+        var codername = $("#SeletedCoder option:selected").text();
+        debugger;
+        //var tableControl = document.getElementById('allotGrid');
+        //$('input:checkbox:checked', tableControl).each(function () {
+
+        //    checkList.push($(this).attr("id"));
+           
+        //      var arrayOfAccounts = arrayOfAccounts + "," + $(this).closest('tr').find('td:eq(0)').text();
+        //}).get();
+
+        var import_id = $("#formAllotGrid input:text").val();
+
+
+
+        var practiceId = $("#ddlPractice option:selected").val();
+        
+        $.ajax({
+            url: '@Url.Action("CodingAllotment")',
+            cache: false,
+            type: 'POST',
+            data: { listOfAccounts: import_id, practiceId: practiceId, codername: codername, buttonText: bText },
+            dataType: 'JSON',
+            beforeSend: function () {
+            },
+            success: function (data) {
+                //LoadAllotmentGrid('', '', '');
+                LoadAllotmentGrid($("#Status option:selected").val(), '', '');
+                $('#SessionAccounts').val(arrayOfAccounts);
+                console.log(checkList);
+                $('#From').val("0");
+                $('#To').val("0");
+                SuccessMessage('Data has been updated');
+            },
+            error: function (jXhr) {
+                alert(jXhr);
+            }
+        });
+        //});
+    }
+    function SubmittingForm1(bText) {
+        $.ajax({
+            url: '@Url.Action("CodingAllotment")',
+            cache: false,
+            type: 'POST',
+            data: { listOfAccounts: $('#SessionAccounts').val(), buttonText: bText },
+            dataType: 'JSON',
+            beforeSend: function () {
+            },
+            success: function (data) {
+                LoadAllotmentGrid('', '', '');
+                $("#btnAllot").show();
+                $("#btnSubmit").hide();
+                $('#txtFromDOS').val();
+                $('#txtToDOS').val();
+                $('#From').val();
+                $('#To').val();
+                checkList.length = 0;
+                SuccessMessage('Allotted Successfully');
+            },
+            error: function (jXhr) {
+                alert(jXhr);
+            }
+        });
+    }
+
+    function SubmittingExportbtn() {
+
+        var url = '@Url.Action("CodingAllotmentExport")';
+        window.location.href = url;
+        SuccessMessage("Data exported successfully!!");
+       
+    }
+
+
+    $("#From").keypress(function (e) {
+
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+
+            return false;
+        }
+    });
+    $("#To").keypress(function (e) {
+
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+
+            return false;
+        }
+    });
+   
+</script>
