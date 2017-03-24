@@ -4,11 +4,11 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
-using McKesson_Denial_Coding.BAL.Generics;
-using McKesson_Denial_Coding.BAL.Managers;
-using McKesson_Denial_Coding.BAL.ViewModels;
+using Denial_Coding.BAL.Generics;
+using Denial_Coding.BAL.Managers;
+using Denial_Coding.BAL.ViewModels;
 
-namespace McKesson_Denial_Coding.Controllers
+namespace Denial_Coding.Controllers
 {
     public class HomeController : Controller
     {
@@ -34,14 +34,13 @@ namespace McKesson_Denial_Coding.Controllers
         }
 
         public ActionResult Home()
-        {
-            managerObj.GetProject_LocationList();
-            return View(managerObj.GetProject_LocationList());
+        {            
+            return View(managerObj.GetProject_locationList());
         }
         [HttpPost]
         public ActionResult LoadClientMenu(UserMenuModel model)
         {
-            return RedirectToAction("Index", "Import", model);
+            return RedirectToAction("ImportIndex", "Import", model);
         }
 
         #region SignOut
