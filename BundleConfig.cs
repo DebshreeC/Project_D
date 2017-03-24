@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Optimization;
 
-namespace McKesson_Denial_Coding
+namespace Denial_Coding
 {
     public class BundleConfig
     {
