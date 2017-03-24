@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
-namespace McKesson_Denial_Coding.BAL.ViewModels
+namespace Denial_Coding.BAL.ViewModels
 {
     public class AdminModel
     {
@@ -14,9 +14,9 @@ namespace McKesson_Denial_Coding.BAL.ViewModels
         public List<SelectListItem> ColumnList { get; set; }
         public string SelectedColumn { get; set; }        
         public string Display_Name{ get; set; }
-        public int Project_Id{ get; set; }
-        public int Mapping_Id{ get; set; }
+        public int Project_Id{ get; set; }        
         public int Practice_Id { get; set; }
+        public int Mapping_Id { get; set; }
         public string Practice { get; set; }
         public List<SelectListItem> PracticeList { get; set; }
         public List<SelectListItem> MappingList { get; set; }
@@ -25,5 +25,6 @@ namespace McKesson_Denial_Coding.BAL.ViewModels
         public string UPDATED_DATE { get; set; }
         public List<SelectListItem> ProjectList { get; set; }
         public string SelectedProject { get; set; }
+        public string DataType { get; set; }
     }
 }
