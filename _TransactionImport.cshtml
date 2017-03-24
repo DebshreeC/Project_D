@@ -1,0 +1,297 @@
+﻿@model System.Data.DataTable
+@using System.Data;
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { @id = "formTransactionAccount" }))
+{
+            <div class="modal fade bs-example-modal-lg in" tabindex="-1" role="dialog" aria-hidden="true" style="display: block; padding-right: 17px; background: rgba(0,0,0,0.3);" id="modaleditColumn">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" tabindex="0" class="close" data-dismiss="modal" onclick="CloseModal()">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">Column Details</h4>
+                    </div>
+                    <div class="modal-body col-md-offset-1 col-sm-offset-1 col-lg-offset-1">
+
+
+                        <div class="col-md-12 col-lg-12 col-sm-12">
+@for (int i = 0; i <= Model.Columns.Count - 1; i++)
+{    
+    //@Model.Columns[i].ColumnName.ToString().Replace(" ", "_");
+                            <div class="row" style="margin-top:1em">
+                                    @if (@Model.Columns[i].ColumnName.ToString().Replace(" ", "_") == "IMPORT_ID")
+                                    {
+                                        <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <label> @Model.Columns[i].ColumnName.ToString():</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <input id=@Model.Columns[i].ColumnName.Replace(" ", "_") name=@Model.Columns[i].ColumnName.Replace(" ", "_") value="@Model.Rows[0].ItemArray[i]" class="form-control customeSelect" type="text" readonly="readonly" />
+                                        @*@Html.ValidationMessageFor(model => model.DOS)*@
+                                    </div>
+                                    }
+                                @*<div class="row" style="margin-top:1em">*@
+                                    @if (@Model.Columns[i].ColumnName.ToString().Replace(" ", "_") == "CLIENT_ID")
+                                    {
+                                    <div class="col-md-3 col-sm-3 col-lg-3">                                     
+                                        <label> @Model.Columns[i].ColumnName.ToString():</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <input type="hidden" id="ddl_@Model.Columns[i].ColumnName.Replace(" ", "_")" value="@Model.Rows[0].ItemArray[i]" />
+                                        @Html.DropDownList("CLIENT_ID", new SelectList(ViewBag.CLIENTID, "Text", "Value"), "-- Select --", new { @class = "form-control customeSelect", @id = "ddlclientid" })
+                                        @*@Html.DropDownListFor(x => x.CLIENT_ID, new SelectList(@Model.CLIENT_ID, "Value", "Text"), "-- Select --", new { @class = "form-control", @id = "ddlclientid" })*@
+                                        @*@Html.ValidationMessageFor(model => model.CLIENT_ID)*@
+                                        
+                                    </div>
+                                    }
+                                    @if (@Model.Columns[i].ColumnName.ToString().Replace(" ", "_") == "ACCOUNT_NAME")
+                                    {
+                                        <div class="col-md-3 col-sm-3 col-lg-3">
+                                            <label> @Model.Columns[i].ColumnName.ToString():</label>
+                                        </div>
+                                        <div class="col-md-3 col-sm-3 col-lg-3">                                           
+                                            <input id=@Model.Columns[i].ColumnName.Replace(" ", "_") name=@Model.Columns[i].ColumnName.Replace(" ", "_") value="@Model.Rows[0].ItemArray[i]" class="form-control customeSelect" type="text" />
+                                            @*@Html.ValidationMessageFor(model => model.ACCOUNT_NAME)*@
+                                        </div>
+                                    }
+                                        @*</div>*@
+                                
+                                @*<div class="row" style="margin-top:1em">*@
+@if (@Model.Columns[i].ColumnName.ToString().Replace(" ", "_") == "DOS")
+                                    {
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <label> @Model.Columns[i].ColumnName.ToString():</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <input id=@Model.Columns[i].ColumnName.Replace(" ", "_") name=@Model.Columns[i].ColumnName.Replace(" ", "_") value="@Model.Rows[0].ItemArray[i]" class="form-control customeSelect" type="text" />
+                                        @*@Html.ValidationMessageFor(model => model.DOS)*@
+                                    </div>
+}
+@if (@Model.Columns[i].ColumnName.ToString().Replace(" ", "_") == "ACCOUNT_NO")
+                                    {
+
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <label> @Model.Columns[i].ColumnName.ToString():</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <input type="hidden" id="ddl_@Model.Columns[i].ColumnName.Replace(" ", "_")" value="@Model.Rows[0].ItemArray[i]" />
+                                        @Html.DropDownList("ACCOUNT_NO", new SelectList(ViewBag.ACCOUNTNO, "Text", "Value"), "-- Select --", new { @class = "form-control customeSelect", @id = "ddlaccountno" })
+                                        @*@Html.DropDownListFor(x => x.ACCOUNT_NO, new SelectList(@Model.AccountNoList, "Value", "Text"), "-- Select --", new { @class = "form-control", @id = "ddlaccountno" })*@
+                                        @*@Html.ValidationMessageFor(model => model.ACCOUNT_NO)*@
+                                    </div>
+}
+                                @*</div>*@
+
+                                @*<div class="row" style="margin-top:1em">*@
+@if (@Model.Columns[i].ColumnName.ToString().Replace(" ", "_") == "DENIAL_WORKED_DT")
+                                    {
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <label> @Model.Columns[i].ColumnName.ToString():</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <input id=@Model.Columns[i].ColumnName.Replace(" ", "_") name=@Model.Columns[i].ColumnName.Replace(" ", "_") value="@Model.Rows[0].ItemArray[i]" class="form-control customeSelect" type="text" />
+                                        @*@Html.ValidationMessageFor(model => model.DENIAL_WORKED_DT)*@
+                                    </div>
+}
+@if (@Model.Columns[i].ColumnName.ToString().Replace(" ", "_") == "ERROR_CATEGORY")
+                                    {
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <label> @Model.Columns[i].ColumnName.ToString():</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <input type="hidden" id="ddl_@Model.Columns[i].ColumnName.Replace(" ", "_")" value="@Model.Rows[0].ItemArray[i]" />
+                                        @Html.DropDownList("ERROR_CATEGORY", new SelectList(ViewBag.ERRORCATEGORY, "Text", "Value"), "-- Select --", new { @class = "form-control customeSelect", @id = "ddlerrorid", @onchange = "CallerrorChangefunc()" })
+                                        @*@Html.ValidationMessageFor(model => model.ERROR_CATEGORY)*@
+                                    </div>
+}
+                                @*</div>*@
+                                @*<div class="row" style="margin-top:1em">*@
+@if (@Model.Columns[i].ColumnName.ToString().Replace(" ", "_") == "SUB_CATEGORY_ERROR_TYPE")
+                                    {
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                    <label> @Model.Columns[i].ColumnName.ToString():</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <input type="hidden" id="ddl_@Model.Columns[i].ColumnName.Replace(" ", "_")" value="@Model.Rows[0].ItemArray[i]" />
+                                        @Html.DropDownList("SUB_CATEGORY_Error_Type", Enumerable.Empty<SelectListItem>(), "-- Select --", new { @class = "form-control customeSelect", @id = "ddlsubid" })
+                                        @*@Html.DropDownListFor(x => x.SUB_CATEGORY_Error_Type, new SelectList(@Model.SUBCATEGORYList, "Value", "Text"), "-- Select --", new { @class = "form-control", @id = "ddlclientid" })*@
+                                    </div>
+}
+@if (@Model.Columns[i].ColumnName.ToString().Replace(" ", "_") == "CODER_LOGIN_ID")
+                                    {
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <label> @Model.Columns[i].ColumnName.ToString():</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <input id=@Model.Columns[i].ColumnName.Replace(" ", "_") name=@Model.Columns[i].ColumnName.Replace(" ", "_") value="@Model.Rows[0].ItemArray[i]" class="form-control customeSelect" type="text" />
+                                        @*@Html.ValidationMessageFor(model => model.CODER_LOGIN_ID)*@
+                                    </div>
+}
+                                @*</div>*@
+
+                                @*<div class="row" style="margin-top:1em">*@
+@if (@Model.Columns[i].ColumnName.ToString().Replace(" ", "_") == "QC_LOGIN_ID")
+                                    {
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <label> @Model.Columns[i].ColumnName.ToString():</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <input id=@Model.Columns[i].ColumnName.Replace(" ", "_") name=@Model.Columns[i].ColumnName.Replace(" ", "_") value="@Model.Rows[0].ItemArray[i]" class="form-control customeSelect" type="text" />
+                                        @*@Html.ValidationMessageFor(model => model.QC_LOGIN_ID)*@
+                                    </div>
+}
+@if (@Model.Columns[i].ColumnName.ToString().Replace(" ", "_") == "DENIAL_TYPE")
+                                    {
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <label> @Model.Columns[i].ColumnName.ToString():</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <input type="hidden" id="ddl_@Model.Columns[i].ColumnName.Replace(" ", "_")" value="@Model.Rows[0].ItemArray[i]" />
+                                        @Html.DropDownList("DENIAL_TYPE", new List<SelectListItem>
+                                              { 
+                                                  new SelectListItem() {Text = "Select", Value="Select"},
+                                                  new SelectListItem() { Text = "NON OMEGA", Value = "NON OMEGA"},
+                                                  new SelectListItem() { Text = "OMEGA", Value = "OMEGA"},
+       }, new { @class = "form-control customeSelect", @id = "ddldenialid" })
+                                      
+                                        @*@Html.ValidationMessageFor(model => model.DENIAL_TYPE)*@
+                                    </div>
+}
+                                @*</div>*@
+                                @*<div class="row" style="margin-top:1em">*@
+@if (@Model.Columns[i].ColumnName.ToString().Replace(" ", "_") == "COMMENTS")
+                                    {
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <label> @Model.Columns[i].ColumnName.ToString() :</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <input id=@Model.Columns[i].ColumnName.Replace(" ", "_") name=@Model.Columns[i].ColumnName.Replace(" ", "_") value="@Model.Rows[0].ItemArray[i]" class="form-control customeSelect" type="text" />
+                                        @*@Html.ValidationMessageFor(model => model.COMMENTS)*@
+                                    </div>
+}
+@if (@Model.Columns[i].ColumnName.ToString().Replace(" ", "_") == "AUDITOR_NAME")
+{
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <label> @Model.Columns[i].ColumnName.ToString():</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <input id=@Model.Columns[i].ColumnName name=@Model.Columns[i].ColumnName value="@Model.Rows[0].ItemArray[i]" class="form-control customeSelect" type="text" />
+                                        @*@Html.ValidationMessageFor(model => model.AUDITOR_NAME)*@
+                                    </div>
+                                    }
+                                @*</div>*@
+                                @*<div class="row" style="margin-top:1em">*@
+@if (@Model.Columns[i].ColumnName.ToString().Replace(" ", "_") == "EMP_ID")
+                                    {
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <label> @Model.Columns[i].ColumnName.ToString():</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <input id=@Model.Columns[i].ColumnName.Replace(" ", "_") name=@Model.Columns[i].ColumnName.Replace(" ", "_") value="@Model.Rows[0].ItemArray[i]" class="form-control customeSelect" type="text" />
+                                        @*@Html.ValidationMessageFor(model => model.EMP_ID)*@
+                                    </div>
+}
+@if (@Model.Columns[i].ColumnName.ToString().Replace(" ", "_") == "EMP_NAME")
+                                    {
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <label> @Model.Columns[i].ColumnName.ToString():</label>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-lg-3">
+                                        <input id=@Model.Columns[i].ColumnName.Replace(" ", "_") name=@Model.Columns[i].ColumnName.Replace(" ", "_") value="@Model.Rows[0].ItemArray[i]" class="form-control customeSelect" type="text" />
+                                        @*@Html.ValidationMessageFor(model => model.EMP_NAME)*@
+                                    </div>
+}
+                                @*</div>*@
+                                </div>}
+                    </div>                   
+                </div>
+                <div class="modal-footer" style="text-align:center">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="CloseModal()">Close</button>
+                </div>
+                </div>
+            </div>
+                </div>
+}
+<script>
+
+    function CloseModal() {
+        $('#modaleditColumn').css('display', 'none');
+    }
+
+    $('#formTransactionAccount').on('submit', function (event) {
+        debugger;
+        event.preventDefault();
+        $.ajax({
+            url: '@Url.Action("UpdateTransaction")',
+            cache: false,
+            type: 'POST',
+            data: $(this).serialize(),
+            dataType: 'JSON',
+            beforeSend: function () {
+            },
+            success: function (data) {               
+                LoadcoderInboxGrid();
+                CloseModal();
+                SuccessMessage('Data has been updated');
+            },
+            error: function (jXhr) {
+                alert(jXhr);
+            }
+        });
+    }); 
+
+    $(function () {      
+      
+        debugger;
+        var hidclientvalue = $('#ddl_CLIENT_ID').val();
+        $('#ddlclientid').val(hidclientvalue);
+
+        var hidaccountvalue = $('#ddl_ACCOUNT_NO').val();
+        $('#ddlaccountno').val(hidaccountvalue);
+     
+        var hiderrorvalue = $('#ddl_ERROR_CATEGORY').val();        
+        $('#ddlerrorid').val(hiderrorvalue);
+
+        CallerrorChangefunc();
+
+        //var hidsubvalue = $('#ddl_SUB_CATEGORY_Error_Type').val();
+        //$('#ddlsubid').val(hidsubvalue);
+    
+        var hidvalue=$('#ddl_DENIAL_TYPE').val();
+        $('#ddldenialid').val(hidvalue);        
+    });
+
+
+    function CallerrorChangefunc() {
+        debugger;
+        var errorId = $("#ddlerrorid option:selected").val();
+
+        $.ajax({
+            url: '@Url.Action("SubCategorySelection")',
+            dataType: 'json',
+            data: { errorId: errorId },
+            success: function (data) {
+                $("#ddlsubid").empty();
+                $("#ddlsubid").append("<option value='0'>-- Select --</option>");
+                $.each(data, function (index, optiondata) {
+                    $("#ddlsubid").append("<option value='" + optiondata.Value + "'>" + optiondata.Text + "</option>");
+                    var hidsubvalue = $('#ddl_SUB_CATEGORY_ERROR_TYPE').val();
+                    $('#ddlsubid').val(hidsubvalue);
+                    if ($('#ddlsubid').val() == hidsubvalue)
+                    {
+
+                    }
+                    else
+                    {
+                        $('#ddlsubid').prop('selectedIndex', 0);
+                    }
+                });
+            }
+        })
+
+
+    }
+
+</script>

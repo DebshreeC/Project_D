@@ -1,0 +1,86 @@
+﻿@model List<Denial_Coding.BAL.ViewModels.TransactionModel>
+@{
+    int sno = 1;
+}
+<form id="frmcolumn">
+    @*<div class="row">
+        <div class="col-md-6 col-sm-6 col-lg-6"><label>Client #</label><select id="firstDropdownId" class="form-control"></select></div>
+        <div class="col-md-6 col-sm-6 col-lg-6"><label>Account Number</label><select id="SecondDropdownId" class="form-control"></select></div>
+
+    </div>*@
+
+    <table id="periCoderInbox" class="table table-striped responsive-utilities jambo_table bulk_action customTable" style="width:100%">
+        <thead>
+            <tr>
+                <th class="sorting"><label>S.No</label></th>
+                <th>ID</th>
+                <th>Account Number</th>
+                <th>Client #</th>
+                <th>DOS</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < @Model.Count; i++)
+            {
+                if (Model[i].ACCOUNT_NO != null && Model[i].ACCOUNT_NO != "")
+                {
+                    <tr>
+                        <td id=@Convert.ToInt32(sno)>@Convert.ToInt32(sno)</td>
+                        <td class="col-md-2 col-sm-2 col-lg-2">@Model[i].IMPORT_ID</td>
+                        <td class="col-md-3 col-sm-3 col-lg-3"><u><a class="accountLink" style="color: #1ABB9C;cursor:pointer" id="@Model[i].IMPORT_ID,@Model[i].ACCOUNT_NO,@Model[i].CLIENT_ID,@Convert.ToDateTime(@Model[i].DOS).ToShortDateString()" onclick="DisplayAccount('@Model[i].IMPORT_ID')"> @Model[i].ACCOUNT_NO</a></u></td>
+                        <td class="col-md-3 col-sm-3 col-lg-3">@Model[i].CLIENT_ID</td>
+                        @if(Model[i].DOS==null)
+                        {
+                            <td class="col-md-2 col-sm-2 col-lg-2"></td>
+                        }
+                        else
+                        { 
+                        <td class="col-md-2 col-sm-2 col-lg-2">@Convert.ToDateTime(@Model[i].DOS).ToShortDateString()</td>
+                        }
+                    </tr>
+                }
+                sno++;
+            }
+        </tbody>
+
+    </table>
+    <label style="display:none" id="inLblCount">@Model.Count</label>
+    </form>
+
+    <script>
+        $(document).ready(function () {
+            table = $('#periCoderInbox').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false
+            });
+        });
+
+        function DisplayAccount(IMPORT_ID) {
+            debugger;
+            $.ajax({
+                url: '@Url.Action("EditTransactionList")',
+                cache: false,
+                type: 'GET',
+                dataType: 'html',
+                data: { IMPORT_ID: IMPORT_ID },
+                beforeSend: function () {
+                },
+                success: function (data) {
+
+                    $('#divEDITCol').first().html(data);
+                    //alert('Success');
+
+                },
+                error: function (jXhr) {
+                    alert('Failure');
+                }
+            });
+
+
+        }
+
+    </script>

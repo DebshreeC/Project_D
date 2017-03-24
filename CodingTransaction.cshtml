@@ -1,0 +1,66 @@
+﻿@model Denial_Coding.BAL.ViewModels.TransactionModel
+@using Denial_Coding.BAL.Generics
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Transaction</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .image {
+            position: relative;
+            width: 100%; /* for IE 6 */
+        }
+    </style>
+    <script src="~/CustomStyles/ToasterMessages.js"></script>
+</head>
+<body>
+    <div class="row x_panel">
+        <div class="row">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2><i class="fa fa-bars"></i> Coder Inbox <small></small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li style="float:right">
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content" id="coderInbox" style="overflow-x:scroll">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="divEDITCol"></div>
+</body>
+</html>
+
+<script>
+    var ProjId =@HttpContext.Current.Session[Constants.ProjectId]
+    $(function () {
+        LoadcoderInboxGrid();
+
+    });
+    function LoadcoderInboxGrid() {
+        $.ajax({
+            url: '@Url.Action("LoadCoderInbox")',
+            cache: false,
+            type: 'GET',
+            dataType: 'html',
+            beforeSend: function () {
+            },
+            success: function (data) {
+                $('#coderInbox').first().html(data);
+            },
+            error: function (jXhr) {
+            }
+        });
+    }
+
+
+</script>
