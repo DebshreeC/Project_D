@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace McKesson_Denial_Coding.BAL.Generics
+namespace Denial_Coding.BAL.Generics
 {
    public class CryptoGraphy
     {
