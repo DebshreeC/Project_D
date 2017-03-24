@@ -1,0 +1,256 @@
+﻿@{
+    int sno = 1;
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @id = "forminnerGrid" }))
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="row">
+
+        <div class="col-md-12 col-sm-12 col-lg-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2> Filter Data</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li style="float:right">
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="col-md-6 col-sm-6 col-lg-6">
+                        <label class="col-md-2 col-sm-2 col-lg-2">Filter By</label>
+                        <div class="col-md-3 col-sm-3 col-lg-3">
+
+                            @Html.DropDownList("SelectedHeader", new SelectList(Model.Columns), "--Select--", new { @id = "lblHeader", @class = "form-control" })
+
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-lg-4">
+                            <input type="text" class="form-control" id="SearchText" />
+                        </div>
+
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-lg-6">
+                        @*<input type="button" class="col-md-2 col-sm-2 col-lg-2 btn btn-success" id="btnApplyAll" style="width: 12%;" onclick="return ManageAccounts('Apply All')" value="Apply All" />*@
+                        <input type="button" class="col-md-2 col-sm-2 col-lg-2 btn btn-primary" id="btnReUpload" style="width: 12%;" onclick="return ReuploadAccounts('Upload')" value="Upload" />
+                        <input type="button" class="col-md-2 col-sm-2 col-lg-2 btn btn-danger" id="btnDelete" style="width: 12%;" onclick="return DeleteAccounts('Delete')" value="Delete" />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Denial Log(s) : @*<label id="lblUnsuccessfullCount">@Model.Rows.Count</label>*@
+                    </h2>
+
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li style="float:right">
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+
+                    <table class="table table-striped responsive-utilities jambo_table bulk_action customTable" id="tblunSuccessGrid">
+                        <thead>
+                            <tr class="heading">
+                                <th><input type="checkbox" class="checkbox" id="chkqcInboxGroup" /></th>
+                                <th class="sorting"><label>S.No</label></th>
+                                @foreach (System.Data.DataColumn col in Model.Columns)
+                                {
+
+                                    <th>@col.Caption</th>
+                                }
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (System.Data.DataRow row in Model.Rows)
+                            {
+                                <tr>
+                                    <td><input type="checkbox" class="checkbox accountCheck" id="chk_" value="" /></td>
+                                    <td id=@Convert.ToInt32(sno)>@Convert.ToInt32(sno)</td>
+                                    @Html.HiddenFor(x => row[0], new { @id = "btId" })
+
+                                    @foreach (var cell in row.ItemArray)
+                                    {
+
+                                        <td>@cell.ToString()</td>
+                                    }
+                                </tr>
+                                sno++;
+                            }
+
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+@*<input type="hidden" id="gridCount" value="@Model.Count" />*@
+
+
+<script>
+    var modelList = [];
+    var array = new Array();
+    $(document).ready(function () {
+        $('#tblunSuccessGrid').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "columnDefs": [
+                        {
+                            "targets": [1],
+                            "bSortable": false,
+                        },
+                        {
+                            "targets": [2],
+                            "visible": false
+
+                        }
+            ]
+
+        });
+        @*$('#lblUnsuccessfullCount').text(@Model.Count);*@
+    });
+
+    $("#chkqcInboxGroup").click(function () {
+        $(".accountCheck").prop('checked', $(this).prop('checked'));
+    });
+       
+    function ReuploadAccounts(type) {
+
+        var checked = $("#forminnerGrid input:checked").length > 0;
+        if (!checked) {
+            ErrorMessage("Please select at least one account");
+            return false;
+        }
+        if ($("#lblHeader").val() == "ID") {
+            ErrorMessage("ID can not Change");
+            return false;
+        }
+        debugger;
+        var modelcol = $("#lblHeader option:selected").val();
+        var modelcolvalue = $("#SearchText").val();
+        denialcodeedit();
+        $.ajax({
+            url: '@Url.Action("UpdateInnerGrid", "Import")?operation=' + type,
+            cache: false,
+            type: 'POST',
+            contentType: 'application/json;',
+            dataType: 'JSON',
+            data: JSON.stringify(modelList),
+
+            beforeSend: function (aa) {
+
+            },
+            success: function (data) {
+                modelList.length=0;
+                LoadImportInboxGrid();
+                SuccessMessage('Data has been updated');
+
+            },
+            error: function (jXhr) {
+                ErrorMessage("There is some problem");
+            }
+        });
+
+    }
+    function DeleteAccounts(type) {
+
+        var checked = $("#forminnerGrid input:checked").length > 0;
+
+        if (!checked) {
+            ErrorMessage("Please select at least one account");
+            return false;
+        }
+        denialcode();
+        if (!confirm("Are you sure? Do you want to delete account ?")) {
+
+            return false;
+        }
+        else
+        {
+            $.ajax({
+                url: '@Url.Action("UpdateInnerGrid", "Import")?operation=' + type,
+                cache: false,
+                type: 'POST',
+                contentType: 'application/json;',
+                dataType: 'JSON',
+                data: JSON.stringify(modelList),
+
+                beforeSend: function (aa) {
+
+                },
+                success: function (data) {
+                    debugger;
+                    modelList.length = 0;
+                    LoadImportInboxGrid();
+                    SuccessMessage('Successfully Deleted');
+
+                },
+                error: function (jXhr) {
+                    ErrorMessage("There is some problem");
+                }
+            });
+        }
+
+
+    }
+    function denialcode() {
+        var tableControl = document.getElementById('tblunSuccessGrid');
+        $('input:checkbox:checked', tableControl).each(function () {
+
+            var ChekStatus = $(this).val();           
+            var importid = $(this).closest('tr').find('#btId').val();
+
+            array = {
+
+                IMPORT_ID: importid
+               //, SearchText: $('#SearchText').val(),
+               // SelectedHeader: $("#lblHeader option:selected").text(),
+            }
+            modelList.push(array);
+
+        }).get();
+    }
+  
+    function denialcodeedit() {
+        var tableControl = document.getElementById('tblunSuccessGrid');
+        $('input:checkbox:checked', tableControl).each(function () {
+
+            var ChekStatus = $(this).val();
+            var importid = $(this).closest('tr').find('#btId').val();
+
+            array = {
+
+                IMPORT_ID: importid
+               , SearchText: $('#SearchText').val(),
+                SelectedHeader: $("#lblHeader option:selected").text()
+            }
+            modelList.push(array);
+
+        }).get();
+    }
+
+
+</script>
+
+
+
+

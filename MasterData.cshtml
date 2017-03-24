@@ -1,0 +1,312 @@
+﻿@model Denial_Coding.BAL.ViewModels.ImportModel
+
+@{
+    ViewBag.Title = "MasterData";
+}
+@using (Html.BeginForm("", "", FormMethod.Post, new { @id = "masterPage" }))
+{
+    <div class="x_panel">
+        <div class="x_title">
+            <h2><i class="fa fa-align-left"></i> Select Practice</h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li style="float:right">
+                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content" id="" style="width: 70%">
+            <div class="row" style="margin-top: 1em">
+                <div class="col-md-2 col-sm-2 col-lg-2"><label>Select Practice : </label></div>
+                <div class="col-md-4 col-sm-4 col-lg-4">@Html.DropDownListFor(x => Model.SelectedPractice, new SelectList(@Model.PracticeList, "Value", "Text"), "-- Select --", new { @class = "form-control", @id = "ddlPractice", @onchange = "LoadImportInboxGrid()" })</div>
+                <div class="col-md-3 col-sm-3 col-lg-3"></div>
+                <div class="col-md-3 col-sm-3 col-lg-3"></div>
+            </div>
+
+        </div>
+    </div>
+    
+    
+    <div class="x_panel">
+        <div class="x_title">
+            <h2><i class="fa fa-align-left"></i> Add Master Data</h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li style="float:right">
+                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content" id="" style="width: 75%">
+            <div class="modal-body col-md-offset-1 col-sm-offset-1 col-lg-offset-1">
+                <div class="row" style="margin-top:1em">
+                    <div>
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>CLIENT ID : </label></div>
+                        <div class="col-md-2 col-sm-2 col-lg-2">
+                            @Html.DropDownListFor(x => x.CLIENT_ID, new SelectList(@Model.ClientList, "Value", "Text"), "-- Select --", new { @class = "form-control", @id = "ddlclientid" })
+                            @Html.ValidationMessageFor(model => model.CLIENT_ID)
+                        </div>
+                    </div>
+                    <div class ="col-md-2 col-sm-2 col-lg-2"></div>
+                    <div>
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>ACCOUNT NAME : </label></div>
+                        <div class="col-md-3 col-sm-3 col-lg-3">
+                            @Html.EditorFor(model => model.ACCOUNT_NAME, new { @class = "form-control", @readonly = "readonly", tabindex = "@(++tabindex)" })
+                            @Html.ValidationMessageFor(model => model.ACCOUNT_NAME)
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-sm-1 col-lg-1"></div>
+                </div>
+                <div class="row" style="margin-top:1em">
+                    <div>
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>DOS : </label></div>
+                        <div class="col-md-3 col-sm-3 col-lg-3">
+                            @Html.EditorFor(model => model.DOS, new { @class = "form-control", tabindex = "@(++tabindex)" })
+                            @Html.ValidationMessageFor(model => model.DOS)
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-sm-1 col-lg-1"></div>
+                    <div>
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>ACCOUNT NO : </label></div>
+                        <div class="col-md-2 col-sm-2 col-lg-2">
+                            @Html.DropDownListFor(x => x.ACCOUNT_NO, new SelectList(@Model.AccountNoList, "Value", "Text"), "-- Select --", new { @class = "form-control", @id = "ddlaccountno" })
+                            @Html.ValidationMessageFor(model => model.ACCOUNT_NO)
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-2 col-lg-2"></div>
+                </div>
+                <div class="row" style="margin-top:1em">
+                    <div>
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>DENIAL-WORKED DATE : </label></div>
+                        <div class="col-md-3 col-sm-3 col-lg-3">
+                            @Html.EditorFor(model => model.DENIAL_WORKED_DT, new { @class = "form-control", tabindex = "@(++tabindex)" })
+                            @Html.ValidationMessageFor(model => model.DENIAL_WORKED_DT)
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-sm-1 col-lg-1"></div>
+                    <div>
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>ERROR CATEGORY : </label></div>
+                        <div class="col-md-2 col-sm-2 col-lg-2">
+                            @Html.DropDownListFor(x => x.ERROR_CATEGORY, new SelectList(@Model.ERRORCATEGORYList, "Value", "Text"), "-- Select --", new { @class = "form-control", @id = "ddlerrorid", @onchange = "CallerrorChangefunc()" })
+                            @Html.ValidationMessageFor(model => model.ERROR_CATEGORY)
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-2 col-lg-2"></div>
+                </div>
+                <div class="row" style="margin-top:1em">
+                    <div>
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>SUB CATEGORY : </label></div>
+                        <div class="col-md-2 col-sm-2 col-lg-2">
+                            @Html.DropDownListFor(x => x.SUB_CATEGORY_Error_Type,  Enumerable.Empty<SelectListItem>(), "-- Select --", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.SUB_CATEGORY_Error_Type)
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-2 col-lg-2"></div>
+                    <div>
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>CODER LOGIN ID : </label></div>
+                        <div class="col-md-3 col-sm-3 col-lg-3">
+                            @Html.EditorFor(model => model.CODER_LOGIN_ID, new { @class = "form-control", tabindex = "@(++tabindex)" })
+                            @Html.ValidationMessageFor(model => model.CODER_LOGIN_ID)
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-sm-1 col-lg-1"></div>
+                </div>
+                <div class="row" style="margin-top:1em">
+                    <div>
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>QC LOGIN ID : </label></div>
+                        <div class="col-md-3 col-sm-3 col-lg-3">
+                            @Html.EditorFor(model => model.QC_LOGIN_ID, new { @class = "form-control", tabindex = "@(++tabindex)" })
+                            @Html.ValidationMessageFor(model => model.QC_LOGIN_ID)
+                        </div>
+                    </div>
+                     <div class ="col-md-1 col-sm-1 col-lg-1"></div>
+                    <div>
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>DENIAL TYPE : </label></div>
+                        <div class="col-md-2 col-sm-2 col-lg-2">
+                            @Html.DropDownList("DENIAL_TYPE", new List<SelectListItem>
+                                        { new SelectListItem { Text = "NON OMEGA", Value = "NON OMEGA"},
+                                            new SelectListItem { Text = "OMEGA", Value = "OMEGA"},
+                                        }, "--Select--", new { @class = "form-control", @id = "ddldenialid" })
+                            @Html.ValidationMessageFor(model => model.DENIAL_TYPE)
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-2 col-lg-2"></div>
+                </div>
+                <div class="row" style="margin-top:1em">
+                    <div>
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>COMMENTS : </label></div>
+                        <div class="col-md-3 col-sm-3 col-lg-3">
+                            @Html.TextAreaFor(model => model.COMMENTS, new { @class = "form-control", tabindex = "@(++tabindex)" })
+                            @Html.ValidationMessageFor(model => model.COMMENTS)
+                        </div>
+                    </div>
+                     <div class ="col-md-1 col-sm-1 col-lg-1"></div>
+                    <div>
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>AUDITOR NAME : </label></div>
+                        <div class="col-md-3 col-sm-3 col-lg-3">
+                            @Html.EditorFor(model => model.AUDITOR_NAME, new { @class = "form-control", tabindex = "@(++tabindex)" })
+                            @Html.ValidationMessageFor(model => model.AUDITOR_NAME)
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-sm-1 col-lg-1"></div>
+                </div>
+                <div class="row" style="margin-top:1em">
+                    <div>
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>EMP ID : </label></div>
+                        <div class="col-md-3 col-sm-3 col-lg-3">
+                            @Html.EditorFor(model => model.EMP_ID, new { @class = "form-control", tabindex = "@(++tabindex)" })
+                            @Html.ValidationMessageFor(model => model.EMP_ID)
+                        </div>
+                    </div>
+                     <div class ="col-md-1 col-sm-1 col-lg-1"></div>
+                    <div>
+                        <div class="col-md-2 col-sm-2 col-lg-2"><label>EMP NAME : </label></div>
+                        <div class="col-md-3 col-sm-3 col-lg-3">
+                            @Html.EditorFor(model => model.EMP_NAME, new { @class = "form-control", tabindex = "@(++tabindex)" })
+                            @Html.ValidationMessageFor(model => model.EMP_NAME)
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-sm-1 col-lg-1"></div>
+                </div>
+                <div class="row" style="margin-top:1em;text-align:center">
+                    <input id="btnSave" type="submit" class="btn btn-success" onclick="return formValidation();" value="Save" style="width: 12%;">
+                   <input type="button" class="btn btn-default" value="Clear" style="width: 12%;" onclick="Clear();" />
+                </div>
+            </div>
+        </div>        
+          </div>
+    <div class="x_content" id="ImportGridBind" style="overflow-x:scroll">
+    </div>
+}
+
+<script>
+        $(function () {
+            LoadImportInboxGrid();
+        });
+    </script>
+
+
+            <script>
+
+                
+                $(function () {
+                    CustumDatePicker('DOS');
+                    CustumDatePicker('DENIAL_WORKED_DT');
+
+                });
+                function formValidation() {
+                    
+
+                }
+
+
+
+                $('#masterPage').on('submit', function (event) {
+                   
+                    event.preventDefault();
+                    //formValidation();
+                    debugger;
+                    var PR = $("#ddlPractice option:selected").val();
+                    if (PR == '') {
+                       
+                        ErrorMessage("Please Select Practice");
+                        return false;
+                    }                 
+
+                    if ($("#ACCOUNT_NAME").val() == "" && $("#DOS").val() == "" && $("#DENIAL_WORKED_DT").val() == "" && $("#CODER_LOGIN_ID").val() == "" && $("#QC_LOGIN_ID").val() == "" && $("#COMMENTS").val() == "" && $("#AUDITOR_NAME").val() == "" && $("#EMP_ID").val() == "0" && $("#EMP_NAME").val() == "" && $('#ddlclientid').val() == "" && $('#ddlaccountno').val() == "" && $('#ddldenialid').val() == "")
+                    {
+                        ErrorMessage("Enter Valid Data");
+                        return false;
+                    }
+
+                        $.ajax({
+                            url: '@Url.Action("ImportData")',
+                            cache: false,
+                            type: 'POST',
+                            data: $(this).serialize(),
+                            dataType: 'JSON',
+                            beforeSend: function () {
+                            },
+                            success: function (data) {
+                                Clear();
+                                SuccessMessage("Data has been updated");
+                            },
+                            error: function (jXhr) {
+                                alert(jXhr);
+                            }
+                        });
+                    
+                });
+
+                function LoadImportInboxGrid() {
+                    debugger;
+                    var PR = $("#ddlPractice option:selected").val();
+                    if (PR == 'Select') {
+                        ErrorMessage("Please Select Practice");
+                        return false;
+                    } 
+                        $.ajax({
+                            url: '@Url.Action("LoadImportInbox")',
+                            cache: false,
+                            type: 'GET',
+                            data: { Practice_Id: PR },
+                            dataType: 'html',
+                            beforeSend: function () {
+                            },
+                            success: function (data) {
+                                //alert('success');
+                                $('#ImportGridBind').first().html(data);
+                            },
+                            error: function (jXhr) {
+                                //alert(jXhr);
+                            }
+                        });
+                    
+                }
+
+                function CallerrorChangefunc() {
+                   
+                    var errorId = $("#ddlerrorid option:selected").val();              
+
+                    $.ajax({
+                        url: '@Url.Action("SubCategorySelection")',
+                        dataType: 'json',
+                        data: { errorId: errorId },
+                        success: function (data) {
+                            $("#SUB_CATEGORY_Error_Type").empty();
+                            $("#SUB_CATEGORY_Error_Type").append("<option value='0'>-- Select --</option>");
+                            $.each(data, function (index, optiondata) {
+                                $("#SUB_CATEGORY_Error_Type").append("<option value='" + optiondata.Value + "'>" + optiondata.Text + "</option>");
+                            });
+                        }
+                    })
+
+
+                }
+
+                function Clear() {
+                    debugger;
+                    $("#ACCOUNT_NAME").val("");
+                    $("#DOS").val("");
+                    $("#DENIAL_WORKED_DT").val("");
+                    $("#CODER_LOGIN_ID").val("");
+                    $("#QC_LOGIN_ID").val("");
+                    $("#COMMENTS").val("");
+                    $("#AUDITOR_NAME").val("");
+                    $("#EMP_ID").val("");
+                    $("#EMP_NAME").val("");
+                    $('#ddlProject_Status').prop('selectedIndex', 0);
+                    $('#ddlclientid').prop('selectedIndex', 0);
+                    $('#ddlaccountno').prop('selectedIndex', 0);
+                    $('#ddlerrorid').prop('selectedIndex', 0);
+                    CallerrorChangefunc();;
+                    $('#ddldenialid').prop('selectedIndex', 0);
+                    $('#ddlPractice').prop('selectedIndex', 0);
+                    window.location.reload();                    
+                    //$('#home').load('/Admin/AdminIndex');
+
+
+                }
+            </script>
+
+

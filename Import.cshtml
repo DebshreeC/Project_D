@@ -1,0 +1,126 @@
+﻿@model Denial_Coding.BAL.ViewModels.ImportModel
+
+@{
+    ViewBag.Title = "Import";
+}
+
+<script>
+    $(function () {
+        var msg = '@ViewBag.Message'
+        if (msg != undefined && msg !== "")
+            if (msg=='Data has been Uploaded') {
+                SuccessMessage(msg);
+            }
+            else {
+                ErrorMessage(msg);
+            }
+    });
+
+</script>
+@using (@Html.BeginForm("Import", "Import", FormMethod.Post, new { id = "formUploadExcel", enctype = "multipart/form-data" }))
+{
+
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-lg-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Import</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li style="float:right">
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    @*<div class="col-md-4 col-sm-4 col-lg-4">
+                            <div class="col-md-4 col-sm-4 col-lg-4"><label> Account Type :</label></div>
+                            <div class="col-md-8 col-sm-8 col-lg-8">
+                                <select class="form-control">
+                                    <option>Emergency Department</option>
+                                    <option>Inpatient</option>
+                                </select>
+                            </div>
+
+                        </div>*@
+                    <div class="col-md-4 col-sm-4 col-lg-4">
+                        <div class="col-md-4 col-sm-4 col-lg-4"><label>Select Practice : </label></div>
+                        <div class="col-md-8 col-sm-8 col-lg-8">@Html.DropDownListFor(x => Model.SelectedPractice, new SelectList(@Model.PracticeList, "Value", "Text"), "-- Select --", new { @class = "form-control", @id = "ddlPractice" })</div>
+
+
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-lg-4">
+                        <div class="col-md-4 col-sm-4 col-lg-4"><label>Select File : </label></div>
+                        <div class="col-md-8 col-sm-8 col-lg-8">@Html.TextBox("file", Model.FieldName, new { @type = "file", @class = "form-control" })</div>
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-lg-4">
+                        <input type="submit" id="btnImport" class="btn btn-primary" onclick="return FileValidation();" value="Upload" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-lg-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Account History</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li style="float:right">
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="col-md-4 col-sm-4 col-lg-4">
+                        <label class="col-md-6 col-sm-6 col-lg-6">Total Uploaded Account(s) :</label>
+                        <label class="col-md-6 col-sm-6 col-lg-6">@Convert.ToInt32(@Model.TotalExcelCount)</label>
+                    </div>                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="unsuccessGrid">
+
+    </div>
+
+}
+@*<script>
+    $(function () {
+        LoadInitialGrid();
+    });
+</script>*@
+<script>
+
+
+            function LoadInitialGrid() {
+                $.ajax({
+                    url: '@Url.Action("LoadUnsuccessfulGrid")',
+                    cache: false,
+                    type: 'GET',
+                    dataType: 'html',
+                    beforeSend: function () {
+                    },
+                    success: function (data) {
+                        $('#unsuccessGrid').first().html(data);
+                    },
+                    error: function (jXhr) {
+                    }
+                });
+            }
+
+            function FileValidation()
+            {
+                debugger;
+                var file = $('input[type=file]').val();
+                if (!file) {
+                    ErrorMessage('Please choose file');
+                    event.preventDefault();
+                    return false;
+                }
+            }
+
+</script>
